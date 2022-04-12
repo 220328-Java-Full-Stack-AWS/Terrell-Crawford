@@ -7,53 +7,41 @@ import com.revature.services.AuthService;
 import com.revature.util.ConnectionFactory;
 import java.sql.*;
 import java.util.Optional;
-import java.util.Random;
-import java.util.Random.*;
+import java.util.OptionalInt;
 
 public class UserDAO {
-    ConnectionFactory con = ConnectionFactory.getInstance();
+    Connection con = ConnectionFactory.getInstance().getConnection();
     Optional<User> resultOp = Optional.empty();
-
-
+    static int k=0;
+    static int rowChecker=0;
     /**
      * Should retrieve a User from the DB with the corresponding username or an empty optional if there is no match.
      */
     public Optional<User> getByUsername(String username) {
-        //Stores SQL QUERY
+        User temp = new User();
+        String query = "SELECT * FROM ers_users WHERE ers_username=?";
         try {
-            String query ="SELECT * FROM ers_users WHERE ers_username=?";
-            User tempUser = new User();
-            //creates an SQL statement and tries to execute it
-            PreparedStatement st = con.getConnection().prepareStatement(query);
-            st.setString(1,username);
-            //stores result into a ResultSet
-            ResultSet rs = st.executeQuery();
-            System.out.println(rs.getInt(1));
-            //Store retrieved values into user object
-            tempUser.setId(rs.getInt("ers_users_id"));
-            tempUser.setUsername(username);
-            tempUser.setPassword(rs.getString("ers_password"));
-            tempUser.setFirstName(rs.getString("user_first_name"));
-            tempUser.setLastName(rs.getString("user_last_name"));
-            tempUser.setEmail(rs.getString("user_email"));
-            tempUser.setRoleID(rs.getInt("user_role_id"));
-            System.out.println(tempUser.getId());
-            System.out.println(tempUser.getUsername());
-            System.out.println(tempUser.getPassword());
-            //Store user object into Optional
-            resultOp=Optional.of(tempUser);
-
+            PreparedStatement preparedStatement= con.prepareStatement(query);
+            preparedStatement.setString(1, username);
+            ResultSet resultSet= preparedStatement.executeQuery();
+            while(resultSet.next()) {
+                temp.setId(resultSet.getInt(1));
+                temp.setUsername(resultSet.getString(2));
+                temp.setPassword(resultSet.getString(3));
+                temp.setFirstName(resultSet.getString(4));
+                temp.setLastName(resultSet.getString(5));
+                temp.setEmail(resultSet.getString(6));
+                temp.setRoleID(resultSet.getInt(7));
+            }
+            resultOp= Optional.of(temp);
+            return resultOp;
         } catch (SQLException e) {
-            System.out.println("Couldn't find user '\n' " + e.getMessage()+" "+e.getErrorCode());
-            //e.printStackTrace();
-           // return Optional.empty();
+            e.printStackTrace();
         }
+
         return resultOp;
     }
-           //Get User out of DB
 
-           //if user doesn't exist return Optional.empty if it does exist, return Optional.of(user)
-           //Optional.get to get object out of the Optional
 
     /**
      * <ul>
@@ -63,10 +51,14 @@ public class UserDAO {
      * </ul>
      */
     public User create(User userToBeRegistered) {
+        //counter for user ID
+        k++;
+        //SQL query to store User information to DB
+        String query ="INSERT INTO ers_users(ers_users_id, ers_username, ers_password, user_first_name, user_last_name, user_email, user_role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
-            //Insert user into DB
-            String query ="INSERT INTO ers_users(ers_users_id, ers_username, ers_password, user_first_name, user_last_name, user_email, user_role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement st = con.getConnection().prepareStatement(query);
+            //Stores prepared SQL statement into st
+            PreparedStatement st = con.prepareStatement(query);
+            //sets vales called sent into prepared statement
             st.setInt(1, userToBeRegistered.getId());
             st.setString(2, userToBeRegistered.getUsername());
             st.setString(3, userToBeRegistered.getPassword());
@@ -74,13 +66,12 @@ public class UserDAO {
             st.setString(5, userToBeRegistered.getLastName());
             st.setString(6, userToBeRegistered.getEmail());
             st.setInt(7,userToBeRegistered.getRoleID());
-            ResultSet rs = st.executeQuery();
+            rowChecker=st.executeUpdate();
         }catch (SQLException e) {
-            System.out.println("Couldn't add user ");
-            throw new RegistrationUnsuccessfulException();
+            System.out.println("Couldn't add user "+ e.getMessage() +"\n"+ e.getErrorCode());
+            throw new RegistrationUnsuccessfulException("Error occured when registering account");
         }
-        userToBeRegistered.setId(1);
-        //userToBeRegistered.setId(ran.nextInt(1000000000));
+        userToBeRegistered.setId(k);
         return userToBeRegistered;
     }
 }

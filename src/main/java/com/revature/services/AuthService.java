@@ -21,7 +21,6 @@ import java.util.Optional;
 public class AuthService {
     UserService userService= new UserService();
     UserDAO uDAO= new UserDAO();
-   // Exception regError = new RegistrationUnsuccessfulException();
     /**
      * <ul>
      *     <li>Needs to check for existing users with username/email provided.</li>
@@ -32,15 +31,17 @@ public class AuthService {
      * </ul>
      */
     public User login(String username, String password){
-        if(userService.getByUsername(username).equals(Optional.empty())){
-            throw new NoSuchUserException("That user doesn't exist");
-
+        Optional<User> tempOp =userService.getByUsername(username);
+        User temp = tempOp.get();
+        if(tempOp.equals(Optional.empty())){
+           throw new NoSuchUserException("User doesn't exist");
+        }else if(!temp.getPassword().equals(password)){
+            throw new NoSuchPassword("Incorrect password");
+        }else{
+            return temp;
         }
 
-        return null;
     }
-
-
 
     /**
      * <ul>
@@ -56,20 +57,17 @@ public class AuthService {
      * After registration, the id will be a positive integer.
      */
     public User register(User userToBeRegistered) {
-        String username = userToBeRegistered.getUsername();
-        String email = userToBeRegistered.getEmail();
-        User temp = new User();
-        //Check if User's username is unique or not
-        if (!userService.getByUsername(username).equals(Optional.empty())) {
-            System.out.println("TRY AGAIN, FOOL!");
-        //If username is unique but ID is non-zero
-        }else if(userToBeRegistered.getId() != 0){
-              throw new NewUserHasNonZeroIdException("ERROR: User ID for new user is not 0");
+        String userName = userToBeRegistered.getUsername();
+        int userID = userToBeRegistered.getId();
+        Optional<User> tempOp =userService.getByUsername(userName);
+        if(tempOp.equals(Optional.empty())){
+            throw new UsernameNotUniqueException("Username already exists");
+        }else if(userID!=0){
+            throw new NewUserHasNonZeroIdException();
         }else{
-            temp = uDAO.create(userToBeRegistered);
-
-        }
+            User temp = uDAO.create(userToBeRegistered);
             return temp;
+        }
     }
 
 

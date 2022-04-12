@@ -13,12 +13,10 @@ public class Driver {
     public static void main(String[] args) {
         //Services
         AuthService loginCheck= new AuthService();
-        //establish DB connection
-        //ConnectionFactory CF;
-        //CF=ConnectionFactory.getInstance();
         String userIn;
         UserService userService= new UserService();
-
+        String username;
+        String pass;
         //Using console as UI until we go over how to make a web UI
 
         //Setup Scanner for early UI implementation
@@ -31,10 +29,12 @@ public class Driver {
         if(newOrReturning.equals("1")){
             System.out.println("Enter Username:");
             userIn= scan.next();
+            username=userIn;
             //Insert code to check if user exists and handle what happens if it doesn't HERE ***NOT DONE YET****
             System.out.println("Enter Password for "+ userIn);
             userIn= scan.next();
-
+             pass=userIn;
+             loginCheck.login(username, pass);
             //Insert code to check if correct password was given and handle what happens if it wasn't HERE **** NOT DON YET***
             System.out.println("Welcome! Press 1 to view");
 
@@ -58,22 +58,14 @@ public class Driver {
             userIn=scan.next();
             newUser.setUsername(userIn);
 
-            //register the new user
-            loginCheck.register(newUser);
-
-
-
-            /*
-            * if(username is already in datatbase){
-            *   UsernameNotUniqueException();
-            *   RegistrationUnsuccessfulException("That username is unavailable please use another")
-            * }*/
-
-            //If username is available create new user object and set username to input given ***NOT DONE YET**
             System.out.println("Enter New Password");
             userIn= scan.next();
             newUser.setPassword(userIn);
-            //Insert code to set password of newly created user to input given
+
+            System.out.println("Attempting to register user now");
+            //Attempt to register the new user
+            newUser=loginCheck.register(newUser);
+
 
         }
 

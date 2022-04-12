@@ -17,8 +17,7 @@ public class ConnectionFactory {
     private static Connection connection;
 
     private ConnectionFactory() {
-        //super();
-        //getConnection();
+
     }
 
     /**
@@ -42,16 +41,19 @@ public class ConnectionFactory {
      */
     // Code required to actually connect to the Database
     public Connection getConnection() {
+        //Creates a Hashtable to store values and gets the context of the current thread
         Properties props = new Properties();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        //loads in application.properties file as input
         InputStream input = loader.getResourceAsStream("application.properties");
+        //code to handle IOExceptions
         try {
             props.load(input);
         } catch (IOException e) {
+            System.out.println("Couldn't get the input");
             e.printStackTrace();
         }
-
-
+        //creates a connection string using input from application.properties
         String connectionString = "jdbc:postgresql://" +
                 props.getProperty("hostname") + ":" +
                 props.getProperty("port") + "/" +
