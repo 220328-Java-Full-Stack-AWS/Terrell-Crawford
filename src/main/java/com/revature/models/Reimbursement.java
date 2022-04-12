@@ -1,5 +1,8 @@
 package com.revature.models;
 
+import java.awt.*;
+import java.util.Date;
+
 /**
  * This concrete Reimbursement class can include additional fields that can be used for
  * extended functionality of the ERS application.
@@ -14,6 +17,11 @@ package com.revature.models;
  *
  */
 public class Reimbursement extends AbstractReimbursement {
+    private int  reimbTypeID;
+    private Image reciept;
+    private String description;
+    private Date creationDate;
+    private Date resolutionDate;
 
     public Reimbursement() {
         super();
@@ -25,5 +33,56 @@ public class Reimbursement extends AbstractReimbursement {
      */
     public Reimbursement(int id, Status status, User author, User resolver, double amount) {
         super(id, status, author, resolver, amount);
+    }
+
+    public Reimbursement(int id, Status status, User author, User resolver, double amount, Image reciept, String description, Date creationDate, Date resolutionDate, int reimbTypeID) {
+        super(id, status, author, resolver, amount);
+        this.reimbTypeID=reimbTypeID;
+        this.reciept=reciept;
+        this.description=description;
+        this.creationDate=creationDate;
+        this.resolutionDate=resolutionDate;
+    }
+
+    //Getters and Setters
+
+    public int getReimbTypeID() {
+        return reimbTypeID;
+    }
+
+    public void setReimbTypeID(int reimbTypeID) {
+        this.reimbTypeID = reimbTypeID;
+    }
+
+    public Image getReciept() {
+        return reciept;
+    }
+
+    public void setReciept(Image reciept) {
+        this.reciept = reciept;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getResolutionDate() {
+        return resolutionDate;
+    }
+
+    public void setResolutionDate(Date resolutionDate) {
+        this.resolutionDate = resolutionDate;
     }
 }

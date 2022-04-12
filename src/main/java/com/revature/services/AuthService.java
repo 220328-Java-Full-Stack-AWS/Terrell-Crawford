@@ -1,6 +1,8 @@
 package com.revature.services;
 
+import com.revature.exceptions.*;
 import com.revature.models.User;
+import com.revature.repositories.UserDAO;
 
 import java.util.Optional;
 
@@ -17,7 +19,9 @@ import java.util.Optional;
  * </ul>
  */
 public class AuthService {
-
+    UserService userService= new UserService();
+    UserDAO uDAO= new UserDAO();
+   // Exception regError = new RegistrationUnsuccessfulException();
     /**
      * <ul>
      *     <li>Needs to check for existing users with username/email provided.</li>
@@ -27,9 +31,16 @@ public class AuthService {
      *     <li>Must return user object if the user logs in successfully.</li>
      * </ul>
      */
-    public User login(String username, String password) {
+    public User login(String username, String password){
+        if(userService.getByUsername(username).equals(Optional.empty())){
+            throw new NoSuchUserException("That user doesn't exist");
+
+        }
+
         return null;
     }
+
+
 
     /**
      * <ul>
@@ -45,8 +56,22 @@ public class AuthService {
      * After registration, the id will be a positive integer.
      */
     public User register(User userToBeRegistered) {
-        return null;
+        String username = userToBeRegistered.getUsername();
+        String email = userToBeRegistered.getEmail();
+        User temp = new User();
+        //Check if User's username is unique or not
+        if (!userService.getByUsername(username).equals(Optional.empty())) {
+            System.out.println("TRY AGAIN, FOOL!");
+        //If username is unique but ID is non-zero
+        }else if(userToBeRegistered.getId() != 0){
+              throw new NewUserHasNonZeroIdException("ERROR: User ID for new user is not 0");
+        }else{
+            temp = uDAO.create(userToBeRegistered);
+
+        }
+            return temp;
     }
+
 
     /**
      * This is an example method signature for retrieving the currently logged-in user.

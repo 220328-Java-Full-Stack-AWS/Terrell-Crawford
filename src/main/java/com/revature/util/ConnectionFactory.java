@@ -1,6 +1,11 @@
 package com.revature.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * <p>This ConnectionFactory class follows the Singleton Design Pattern and facilitates obtaining a connection to a Database for the ERS application.</p>
@@ -9,9 +14,11 @@ import java.sql.Connection;
 public class ConnectionFactory {
 
     private static ConnectionFactory instance;
+    private static Connection connection;
 
     private ConnectionFactory() {
-        super();
+        //super();
+        //getConnection();
     }
 
     /**
@@ -20,6 +27,7 @@ public class ConnectionFactory {
      *
      * {@code ConnectionFactory.getInstance()}
      */
+    //Creates an instance of ConnectionFactory if one doesn't exist. Returns the existing ConnectionFactory otherwise.
     public static ConnectionFactory getInstance() {
         if(instance == null) {
             instance = new ConnectionFactory();
@@ -32,7 +40,35 @@ public class ConnectionFactory {
      * <p>The {@link ConnectionFactory#getConnection()} method is responsible for leveraging a specific Database Driver to obtain an instance of the {@link java.sql.Connection} interface.</p>
      * <p>Typically, this is accomplished via the use of the {@link java.sql.DriverManager} class.</p>
      */
+    // Code required to actually connect to the Database
     public Connection getConnection() {
-        return null;
+        Properties props = new Properties();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        InputStream input = loader.getResourceAsStream("application.properties");
+        try {
+            props.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        String connectionString = "jdbc:postgresql://" +
+                props.getProperty("hostname") + ":" +
+                props.getProperty("port") + "/" +
+                props.getProperty("dbname");
+
+        String username = props.getProperty("username");
+        String password = props.getProperty("password");
+
+        try {
+            connection = DriverManager.getConnection(connectionString, username, password);
+        } catch (SQLException e) {
+            System.out.println("Error connecting to Kyle's Database");
+            e.printStackTrace();
+        }
+
+        System.out.println("Connection String: " + connectionString);
+
+        return connection;
     }
 }

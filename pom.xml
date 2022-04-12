@@ -29,5 +29,54 @@
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- PostgreSQL Pluggin  https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.0</version>
+		</dependency>
+
+		<!-- Exec Maven Pluggin  https://www.mojohaus.org/exec-maven-plugin/index.html-->
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>exec-maven-plugin</artifactId>
+			<version>3.0.0</version>
+			<type>maven-plugin</type>
+		</dependency>
+
 	</dependencies>
+
+
+	<build>
+		<!-- Maven Exec Pluggin > -->
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<configuration>
+					<mainClass>com.revature.Driver</mainClass>
+				</configuration>
+			</plugin>
+
+			<!-- this goes within <build> -->
+
+			<plugin>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<!-- here we specify that we want to use the main method within the App class -->
+							<mainClass>com.revature.Driver</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
