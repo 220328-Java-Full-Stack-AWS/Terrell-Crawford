@@ -1,5 +1,6 @@
 package com.revature;
 
+import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.services.AuthService;
 import com.revature.services.UserService;
@@ -21,19 +22,21 @@ public class Driver {
 
         //Setup Scanner for early UI implementation
         Scanner scan = new Scanner(System.in);
-        //Prompt user for log in or to register
+        //Prompt user to log in or to register then read input to determine choice
         System.out.println("Welcome to the ERS system!");
         System.out.println("Please press 1 to login, or 2 to register for an account:");
         String newOrReturning = scan.next();
+
         //If user has account ask for log in credentials else user must create an account
         if(newOrReturning.equals("1")){
             System.out.println("Enter Username:");
             userIn= scan.next();
             username=userIn;
-            //Insert code to check if user exists and handle what happens if it doesn't HERE ***NOT DONE YET****
             System.out.println("Enter Password for "+ userIn);
             userIn= scan.next();
              pass=userIn;
+
+            //Check if user exists and handle what happens if it doesn't
              loginCheck.login(username, pass);
             //Insert code to check if correct password was given and handle what happens if it wasn't HERE **** NOT DON YET***
             System.out.println("Welcome! Press 1 to view");
@@ -41,6 +44,8 @@ public class Driver {
         }else if(newOrReturning.equals("2")){
             //Prompt new user for registration information and store that data into a new User
             User newUser = new User();
+            //Set all new users roles to EMPLOYEE. Admins are assumed to already be registered or will have their role updated.
+            newUser.setRole(Role.EMPLOYEE);
 
             System.out.println("Enter First Name");
             userIn=scan.next();

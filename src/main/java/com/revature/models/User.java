@@ -40,6 +40,7 @@ public class User extends AbstractUser {
         this.roleID=roleID;
     }
 
+
     //Getters and Setters
 
     public String getFirstName() {

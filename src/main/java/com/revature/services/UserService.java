@@ -28,8 +28,8 @@ public class UserService {
 	public Optional<User> getByUsername(String username) {
 		 Optional<User> temp = Optional.empty();
 		 temp = uDAO.getByUsername(username);
-		 if(!temp.equals(Optional.empty())){
-			 return temp;
+		 if(temp.equals(Optional.empty())){
+			 return Optional.empty();
 		}
 		return temp;
 	}

@@ -35,6 +35,14 @@ public class ConnectionFactory {
         return instance;
     }
 
+    /*public static void closeConnection(){
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }*/
+
     /**
      * <p>The {@link ConnectionFactory#getConnection()} method is responsible for leveraging a specific Database Driver to obtain an instance of the {@link java.sql.Connection} interface.</p>
      * <p>Typically, this is accomplished via the use of the {@link java.sql.DriverManager} class.</p>
@@ -57,7 +65,8 @@ public class ConnectionFactory {
         String connectionString = "jdbc:postgresql://" +
                 props.getProperty("hostname") + ":" +
                 props.getProperty("port") + "/" +
-                props.getProperty("dbname");
+                props.getProperty("dbname") + "?schemaName="+
+                props.getProperty("schemaName");
 
         String username = props.getProperty("username");
         String password = props.getProperty("password");

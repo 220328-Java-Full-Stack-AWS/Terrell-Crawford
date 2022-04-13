@@ -31,12 +31,16 @@ public class AuthService {
      * </ul>
      */
     public User login(String username, String password){
+        //checks for users with the same username as given in parameters then stores any found into temp user object
         Optional<User> tempOp =userService.getByUsername(username);
         User temp = tempOp.get();
+        //checks if result of username check returned anything and throws exception if it didn't
         if(tempOp.equals(Optional.empty())){
            throw new NoSuchUserException("User doesn't exist");
+        //If username was found checks if password given matches password associated with username. Throws error if they don't match
         }else if(!temp.getPassword().equals(password)){
             throw new NoSuchPassword("Incorrect password");
+        //If username was found and password matches, then return the temp user
         }else{
             return temp;
         }
@@ -59,13 +63,19 @@ public class AuthService {
     public User register(User userToBeRegistered) {
         String userName = userToBeRegistered.getUsername();
         int userID = userToBeRegistered.getId();
-        Optional<User> tempOp =userService.getByUsername(userName);
-        if(tempOp.equals(Optional.empty())){
+
+        //stores user from getByUsername output into temporary user
+         User temp =userService.getByUsername(userName).get();
+         //Checks if the temp user is the same as user passed into method and throws exception if it is
+        System.out.println(temp.getUsername());
+        if(temp.getUsername().equals(userName)){
             throw new UsernameNotUniqueException("Username already exists");
+        //If new user was passed in, checks to see if their user ID is non-zero and throws exception if it is
         }else if(userID!=0){
             throw new NewUserHasNonZeroIdException();
+        //If new user with ID = 0, then register the user and return that user
         }else{
-            User temp = uDAO.create(userToBeRegistered);
+            temp=uDAO.create(userToBeRegistered);
             return temp;
         }
     }
