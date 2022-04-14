@@ -34,8 +34,9 @@ public class AuthService {
         //checks for users with the same username as given in parameters then stores any found into temp user object
         Optional<User> tempOp =userService.getByUsername(username);
         User temp = tempOp.get();
+        System.out.println(temp.getUsername());
         //checks if result of username check returned anything and throws exception if it didn't
-        if(tempOp.equals(Optional.empty())){
+        if(temp.getUsername()==null){
            throw new NoSuchUserException("User doesn't exist");
         //If username was found checks if password given matches password associated with username. Throws error if they don't match
         }else if(!temp.getPassword().equals(password)){
@@ -68,8 +69,10 @@ public class AuthService {
          User temp =userService.getByUsername(userName).get();
          //Checks if the temp user is the same as user passed into method and throws exception if it is
         System.out.println(temp.getUsername());
-        if(temp.getUsername().equals(userName)){
+        if(temp.getUsername()!=null){
+            if(temp.getUsername().equals(userName)) {
             throw new UsernameNotUniqueException("Username already exists");
+            }
         //If new user was passed in, checks to see if their user ID is non-zero and throws exception if it is
         }else if(userID!=0){
             throw new NewUserHasNonZeroIdException();
@@ -78,6 +81,7 @@ public class AuthService {
             temp=uDAO.create(userToBeRegistered);
             return temp;
         }
+        return temp;
     }
 
 

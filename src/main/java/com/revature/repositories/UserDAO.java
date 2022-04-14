@@ -79,19 +79,38 @@ public class UserDAO {
      * </ul>
      */
     public User create(User userToBeRegistered) {
+        //sets User's ID to int k which starts at 1, then increment k and return the User that was registered
+        //userToBeRegistered.setId(k);
+        //userToBeRegistered.setRoleID(k);
+        //k++;
+
+        //SQL query to store User Role ID and Role into DB
+        String query2 ="INSERT INTO ers_user_roles (user_role) VALUES (?)";
+        try {
+            //Set values in SQL statement to Role ID and Role of User that was passed in
+            PreparedStatement preparedStatement=con.prepareStatement(query2);
+            //preparedStatement.setInt(1, userToBeRegistered.getRoleID());
+            System.out.println(userToBeRegistered.getRole().toString());
+            preparedStatement.setString(1, userToBeRegistered.getRole().toString());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         //SQL query to store User information to DB
-        String query ="INSERT INTO ers_users(ers_users_id, ers_username, ers_password, user_first_name, user_last_name, user_email, user_role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query ="INSERT INTO ers_users(ers_username, ers_password, user_first_name, user_last_name, user_email) VALUES (?, ?, ?, ?, ?)";
         try {
             //Stores prepared SQL statement into st
             PreparedStatement st = con.prepareStatement(query);
             //sets vales called sent into prepared statement
-            st.setInt(1, userToBeRegistered.getId());
-            st.setString(2, userToBeRegistered.getUsername());
-            st.setString(3, userToBeRegistered.getPassword());
-            st.setString(4, userToBeRegistered.getFirstName());
-            st.setString(5, userToBeRegistered.getLastName());
-            st.setString(6, userToBeRegistered.getEmail());
-            st.setInt(7,userToBeRegistered.getRoleID());
+            //st.setInt(1, userToBeRegistered.getId());
+            st.setString(1, userToBeRegistered.getUsername());
+            st.setString(2, userToBeRegistered.getPassword());
+            st.setString(3, userToBeRegistered.getFirstName());
+            st.setString(4, userToBeRegistered.getLastName());
+            st.setString(5, userToBeRegistered.getEmail());
+            //st.setInt(7,userToBeRegistered.getRoleID());
             rowChecker=st.executeUpdate();
         }catch (SQLException e) {
             System.out.println("Couldn't add user \n"+ e.getMessage() +"\n"+ e.getErrorCode());
@@ -99,22 +118,9 @@ public class UserDAO {
             }else */
             throw new RegistrationUnsuccessfulException("Error occured when registering account");
         }
-        //SQL query to store User Role ID and Role into DB
-        String query2 ="INSERT INTO ers_user_roles VALUES (?, ?)";
-        try {
-            //Set values in SQL statement to Role ID and Role of User that was passed in
-            PreparedStatement preparedStatement=con.prepareStatement(query2);
-            preparedStatement.setInt(1, userToBeRegistered.getRoleID());
-            System.out.println(userToBeRegistered.getRole().toString());
-            preparedStatement.setString(2, userToBeRegistered.getRole().toString());
-            preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        //sets User's ID to int k which starts at 1, then increment k and return the User that was registered
-        userToBeRegistered.setId(k);
-        k++;
+
+
         return userToBeRegistered;
     }
 }
