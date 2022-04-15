@@ -18,7 +18,8 @@ import java.util.Date;
  */
 public class Reimbursement extends AbstractReimbursement {
     private int  reimbTypeID;
-    private Image reciept;
+    private int  statusID;
+    //private Image reciept;
     private String description;
     private Date creationDate;
     private Date resolutionDate;
@@ -35,16 +36,26 @@ public class Reimbursement extends AbstractReimbursement {
         super(id, status, author, resolver, amount);
     }
 
-    public Reimbursement(int id, Status status, User author, User resolver, double amount, Image reciept, String description, Date creationDate, Date resolutionDate, int reimbTypeID) {
+    public Reimbursement(int id, Status status, User author, User resolver, double amount, String description, Date creationDate, Date resolutionDate, int reimbTypeID, int statusID) {
         super(id, status, author, resolver, amount);
+        this.statusID=statusID;
         this.reimbTypeID=reimbTypeID;
-        this.reciept=reciept;
+        //this.reciept=reciept;
         this.description=description;
         this.creationDate=creationDate;
         this.resolutionDate=resolutionDate;
     }
 
     //Getters and Setters
+
+
+    public int getStatusID() {
+        return statusID;
+    }
+
+    public void setStatusID(int statusID) {
+        this.statusID = statusID;
+    }
 
     public int getReimbTypeID() {
         return reimbTypeID;
@@ -54,13 +65,13 @@ public class Reimbursement extends AbstractReimbursement {
         this.reimbTypeID = reimbTypeID;
     }
 
-    public Image getReciept() {
+   /* public Image getReciept() {
         return reciept;
     }
 
     public void setReciept(Image reciept) {
         this.reciept = reciept;
-    }
+    }*/
 
     public String getDescription() {
         return description;

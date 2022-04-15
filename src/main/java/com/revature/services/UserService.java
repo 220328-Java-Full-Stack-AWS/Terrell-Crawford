@@ -34,4 +34,14 @@ public class UserService {
 		return temp;
 	}
 
+
+	public Optional<User> getByUserID(int Id) {
+		Optional<User> temp = Optional.empty();
+		temp = uDAO.getByUserID(Id);
+		if(temp.equals(Optional.empty())){
+			return Optional.empty();
+		}
+		return temp;
+	}
+
 }

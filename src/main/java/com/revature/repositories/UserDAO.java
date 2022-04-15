@@ -14,7 +14,6 @@ import java.util.OptionalInt;
 public class UserDAO {
     Connection con = ConnectionFactory.getInstance().getConnection();
     Optional<User> resultOp = Optional.empty();
-    static int k=1;
     static int rowChecker=0;
     /**
      * Should retrieve a User from the DB with the corresponding username or an empty optional if there is no match.
@@ -71,6 +70,70 @@ public class UserDAO {
     }
 
 
+
+    public Optional<User> getByUserID(int Id) {
+        User temp = new User();
+        //SQL query to retrieve users with matching username
+        String query = "SELECT * FROM ers_users WHERE ers_users_id=?";
+        try {
+            //initialize prepared statement set ? to user id value passed in, then execute the query and store it in a result set
+            PreparedStatement preparedStatement= con.prepareStatement(query);
+            preparedStatement.setInt(1, Id);
+            ResultSet resultSet= preparedStatement.executeQuery();
+            //Load result set values into a temp user
+            while(resultSet.next()) {
+                temp.setId(resultSet.getInt(1));
+                temp.setUsername(resultSet.getString(2));
+                temp.setPassword(resultSet.getString(3));
+                temp.setFirstName(resultSet.getString(4));
+                temp.setLastName(resultSet.getString(5));
+                temp.setEmail(resultSet.getString(6));
+                temp.setRoleID(resultSet.getInt(7));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //SQL query to retrieve user roles with matching role id
+        String query2 = "SELECT * FROM ers_user_roles WHERE ers_user_role_id=?";
+        //initialize prepared statement set ? to the RoleID value stored in temp User, then execute the query and store it in a result set
+        try {
+            PreparedStatement preparedStatement= con.prepareStatement(query2);
+            preparedStatement.setInt(1,temp.getRoleID());
+            ResultSet resultSet=preparedStatement.executeQuery();
+            //Convert role string from DB into Role, then store it into temp User
+            while(resultSet.next()){
+                String role = resultSet.getString(2);
+                switch(role){
+                    case "Employee":
+                        temp.setRole(Role.EMPLOYEE);
+                        break;
+                    case "Finance Manager":
+                        temp.setRole(Role.FINANCE_MANAGER);
+                        break;
+                }
+            }
+            //Store user into empty Optional then return it
+            resultOp= Optional.ofNullable(temp);
+            return resultOp;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultOp;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * <ul>
      *     <li>Should Insert a new User record into the DB with the provided information.</li>
@@ -79,10 +142,6 @@ public class UserDAO {
      * </ul>
      */
     public User create(User userToBeRegistered) {
-        //sets User's ID to int k which starts at 1, then increment k and return the User that was registered
-        //userToBeRegistered.setId(k);
-        //userToBeRegistered.setRoleID(k);
-        //k++;
 
         //SQL query to store User Role ID and Role into DB
         String query2 ="INSERT INTO ers_user_roles (user_role) VALUES (?)";
@@ -112,6 +171,8 @@ public class UserDAO {
             st.setString(5, userToBeRegistered.getEmail());
             //st.setInt(7,userToBeRegistered.getRoleID());
             rowChecker=st.executeUpdate();
+            System.out.println(rowChecker);
+            System.out.println(userToBeRegistered.getUsername());
         }catch (SQLException e) {
             System.out.println("Couldn't add user \n"+ e.getMessage() +"\n"+ e.getErrorCode());
            /* if(rowChecker==0&& e.getErrorCode()==0){
