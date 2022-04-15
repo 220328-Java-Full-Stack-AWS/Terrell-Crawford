@@ -70,7 +70,9 @@ public class UserDAO {
     }
 
 
-
+    /**
+     * Should retrieve a User from the DB with the corresponding user id or an empty optional if there is no match.
+     */
     public Optional<User> getByUserID(int Id) {
         User temp = new User();
         //SQL query to retrieve users with matching username
@@ -94,6 +96,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("This is from UDAO getByID. The user Id in temp is currently:" + temp.getId());
         //SQL query to retrieve user roles with matching role id
         String query2 = "SELECT * FROM ers_user_roles WHERE ers_user_role_id=?";
         //initialize prepared statement set ? to the RoleID value stored in temp User, then execute the query and store it in a result set
@@ -157,6 +160,7 @@ public class UserDAO {
             e.printStackTrace();
         }
 
+
         //SQL query to store User information to DB
         String query ="INSERT INTO ers_users(ers_username, ers_password, user_first_name, user_last_name, user_email) VALUES (?, ?, ?, ?, ?)";
         try {
@@ -171,15 +175,40 @@ public class UserDAO {
             st.setString(5, userToBeRegistered.getEmail());
             //st.setInt(7,userToBeRegistered.getRoleID());
             rowChecker=st.executeUpdate();
-            System.out.println(rowChecker);
-            System.out.println(userToBeRegistered.getUsername());
+            System.out.println("This print is from UserDAO. This is to show how many rows you got back."+rowChecker);
+            System.out.println("This print is from UserDAO line 178.Displays output for Username"+userToBeRegistered.getUsername());
         }catch (SQLException e) {
             System.out.println("Couldn't add user \n"+ e.getMessage() +"\n"+ e.getErrorCode());
            /* if(rowChecker==0&& e.getErrorCode()==0){
             }else */
             throw new RegistrationUnsuccessfulException("Error occured when registering account");
         }
-
+        String query3 = "SELECT ers_users_id FROM ers_users WHERE ers_username=?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(query3);
+            preparedStatement.setString(1,userToBeRegistered.getUsername());
+            ResultSet resultSet= preparedStatement.executeQuery();
+            while(resultSet.next()){
+                userToBeRegistered.setId(resultSet.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String query4 ="UPDATE ers_users SET user_role_id = ers_user_roles.ers_user_role_id FROM ers_user_roles WHERE ers_users_id = ers_user_roles.ers_user_role_id";
+        String query5="SELECT user_role_id FROM ers_users WHERE ers_username=?";
+        try {
+            PreparedStatement preparedStatement= con.prepareStatement(query4);
+            //preparedStatement.setString(1, userToBeRegistered.getUsername());
+            preparedStatement.executeUpdate();
+            preparedStatement= con.prepareStatement(query5);
+            preparedStatement.setString(1, userToBeRegistered.getUsername());
+            ResultSet resultSet= preparedStatement.executeQuery();
+            while(resultSet.next()){
+                userToBeRegistered.setRoleID(resultSet.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
 
         return userToBeRegistered;

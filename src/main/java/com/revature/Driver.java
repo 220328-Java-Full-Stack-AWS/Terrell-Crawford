@@ -71,6 +71,9 @@ public class Driver {
             //Attempt to register the new user
             newUser=loginCheck.register(newUser);
 
+            System.out.println(userService.getByUsername(newUser.getUsername()));
+            System.out.println(newUser.getRoleID());
+            System.out.println(userService.getByUserID(newUser.getId()));
 
         }
 
