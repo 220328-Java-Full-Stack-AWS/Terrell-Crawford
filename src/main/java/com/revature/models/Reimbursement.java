@@ -1,7 +1,6 @@
 package com.revature.models;
 
-import java.awt.*;
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * This concrete Reimbursement class can include additional fields that can be used for
@@ -21,8 +20,9 @@ public class Reimbursement extends AbstractReimbursement {
     private int  statusID;
     //private Image reciept;
     private String description;
-    private Date creationDate;
-    private Date resolutionDate;
+    private String reimbType;
+    private Timestamp creationDate;
+    private Timestamp resolutionDate;
 
     public Reimbursement() {
         super();
@@ -36,8 +36,9 @@ public class Reimbursement extends AbstractReimbursement {
         super(id, status, author, resolver, amount);
     }
 
-    public Reimbursement(int id, Status status, User author, User resolver, double amount, String description, Date creationDate, Date resolutionDate, int reimbTypeID, int statusID) {
+    public Reimbursement(int id, Status status, User author, User resolver, double amount, String description, String reimbType, Timestamp creationDate, Timestamp resolutionDate, int reimbTypeID, int statusID) {
         super(id, status, author, resolver, amount);
+        this.reimbType=reimbType;
         this.statusID=statusID;
         this.reimbTypeID=reimbTypeID;
         //this.reciept=reciept;
@@ -48,6 +49,14 @@ public class Reimbursement extends AbstractReimbursement {
 
     //Getters and Setters
 
+
+    public String getReimbType() {
+        return reimbType;
+    }
+
+    public void setReimbType(String reimbType) {
+        this.reimbType = reimbType;
+    }
 
     public int getStatusID() {
         return statusID;
@@ -81,19 +90,19 @@ public class Reimbursement extends AbstractReimbursement {
         this.description = description;
     }
 
-    public Date getCreationDate() {
+    public Timestamp getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Timestamp creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Date getResolutionDate() {
+    public Timestamp getResolutionDate() {
         return resolutionDate;
     }
 
-    public void setResolutionDate(Date resolutionDate) {
+    public void setResolutionDate(Timestamp resolutionDate) {
         this.resolutionDate = resolutionDate;
     }
 }

@@ -1,11 +1,17 @@
 package com.revature;
 
+import com.revature.models.Reimbursement;
 import com.revature.models.Role;
+import com.revature.models.Status;
 import com.revature.models.User;
 import com.revature.services.AuthService;
+import com.revature.services.ReimbursementService;
 import com.revature.services.UserService;
 import com.revature.util.ConnectionFactory;
 import java.sql.SQLOutput;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -13,8 +19,11 @@ public class Driver {
 
     public static void main(String[] args) {
         //Services
+        ReimbursementService reimbServ = new ReimbursementService();
         AuthService loginCheck= new AuthService();
         String userIn;
+        int userNum;
+        double userNumb;
         UserService userService= new UserService();
         String username;
         String pass;
@@ -36,10 +45,78 @@ public class Driver {
             userIn= scan.next();
              pass=userIn;
 
-            //Check if user exists and handle what happens if it doesn't
+            //Check if user exists and handles what happens if it doesn't
              loginCheck.login(username, pass);
-            //Insert code to check if correct password was given and handle what happens if it wasn't HERE **** NOT DON YET***
-            System.out.println("Welcome! Press 1 to view");
+             User currentUser = userService.getByUsername(username).get();
+             System.out.println("Welcome To the Employee Reimbursement System, "+username+"!");
+             //If finance manager has logged in, present the appropriate menus
+             if(currentUser.getRole()==Role.FINANCE_MANAGER){
+                 System.out.println("Press 1 to view ALL Reimbursement Requests, 2 to View Reimbursement by status, logout");
+                 userIn= scan.next();
+                 if(userIn.equals("1")){
+
+                 }
+              //If Employee has logged in, present the appropriate menus
+             }else{
+                 System.out.println("Press 1 to create a new Reimbursement Request, 2 to view Past & Pending Reimbursement Request");
+                 userIn= scan.next();
+                 if(userIn.equals("1")){
+
+                 }else if(userIn.equals("2")){
+                     System.out.println("Press 1 to view pending Requests, 2 to see Completed Requests");
+                     userIn= scan.next();
+                     //View pending requests
+                     if(userIn.equals("1")){
+                         List<Reimbursement>pending=reimbServ.getReimbursementsByStatus(Status.PENDING);
+                         for(Reimbursement r :pending){
+                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" was made on "+r.getCreationDate());
+                         }
+                         System.out.println("Press 1 to edit a Request, 2 to cancel a request");
+                         userIn= scan.next();
+                         if(userIn.equals("1")){
+                             System.out.println("Please enter the ID (The number after Reimbursement ID) of Request you wold like to edit");
+                             userNum= scan.nextInt();
+                             Optional<Reimbursement> temp =reimbServ.getReimbursementByID(userNum);
+                             if(temp.get().getId()==0){
+                                 //throw exception
+                             }else {
+                                 Reimbursement newReimb= temp.get();
+                                 System.out.println("Please enter the amount");
+                                 userNumb= scan.nextDouble();
+                                 newReimb.setAmount(userNumb);
+                                 System.out.println("Please enter the Type of Reimbursement");
+                                 userIn= scan.next();
+                                 newReimb.setReimbType(userIn);
+                                 LocalDateTime now= LocalDateTime.now();
+                                 Timestamp today= Timestamp.valueOf(now);
+                                 newReimb.setCreationDate(today);
+                                 reimbServ.update(newReimb);
+                             }
+                         }else if(userIn.equals("2")){
+                             System.out.println("Please enter the ID (The number after Reimbursement ID) of Request you wold like to delete");
+                             userNum= scan.nextInt();
+                             Optional<Reimbursement> temp = reimbServ.getReimbursementByID(userNum);
+                             if(temp.get().getId()==0){
+                                 System.out.println("There is no reimbursement request with that ID");
+                                 //throw exception
+                             }else reimbServ.delete(temp.get());
+                         }
+
+                     //View Completed Requests
+                     }else if(userIn.equals("2")){
+                         List<Reimbursement> approved=reimbServ.getReimbursementsByStatus(Status.APPROVED);
+                         List<Reimbursement> denied=reimbServ.getReimbursementsByStatus(Status.DENIED);
+                         for(Reimbursement r :approved){
+                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" on "+r.getCreationDate()+" was "+r.getStatus().toString()+" by "+r.getResolver()+" on "+r.getResolutionDate());
+                         }
+                         for(Reimbursement r :denied){
+                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" on "+r.getCreationDate()+" was "+r.getStatus().toString()+" by "+r.getResolver()+" on "+r.getResolutionDate());
+                         }
+
+                     }
+                 }
+             }
+
 
         }else if(newOrReturning.equals("2")){
             //Prompt new user for registration information and store that data into a new User
