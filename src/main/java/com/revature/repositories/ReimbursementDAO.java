@@ -156,6 +156,7 @@ public class ReimbursementDAO {
         String getTypeID="SELECT reimb_type_id FROM ers_reimbursement WHERE reimb_id=?";
         String loadInStatusID="UPDATE ers_reimbursement SET reimb_status_id = ers_reimbursement_status.reimb_status_id FROM ers_reimbursement_status WHERE reimb_status_id = ers_reimbursement_status.reimb_status_id";
         String getStatusID="SELECT reimb_status_id FROM ers_reimbursement WHERE reimb_id=?";
+        String loadID="SELECT reimb_id FROM ers_reimbursement WHERE reimb_id=?";
         try {
             //Store the Type of Reimbursement
             PreparedStatement preparedStatement = con.prepareStatement(storeType);
@@ -184,7 +185,20 @@ public class ReimbursementDAO {
                 newReimb.setStatusID(storeStatusID.getInt("reimb_status_id"));
             }
             //Store and get the TypeID into the Reimbursement
-
+            preparedStatement= con.prepareStatement(loadInTypeID);
+            preparedStatement.executeUpdate();
+            preparedStatement= con.prepareStatement(getTypeID);
+            preparedStatement.setInt(1, newReimb.getId());
+            ResultSet storeTypeID= preparedStatement.executeQuery();
+            while(storeTypeID.next()){
+                newReimb.setReimbTypeID(storeStatusID.getInt("reimb_status_id"));
+            }
+            preparedStatement=con.prepareStatement(loadID);
+            preparedStatement.setInt(1, newReimb.getReimbTypeID());
+            ResultSet loadIDSet= preparedStatement.executeQuery();
+            while(loadIDSet.next()){
+                newReimb.setId(loadIDSet.getInt(1));
+            }
 
 
         } catch (SQLException e) {
