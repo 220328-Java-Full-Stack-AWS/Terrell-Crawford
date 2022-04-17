@@ -138,10 +138,9 @@ public class ReimbursementDAO {
                 ResultSet resultSet2= preparedStatement.executeQuery();
                 while(resultSet2.next()){
                     temp.setReimbType(resultSet2.getString(1));
-                    tempList.add(counter, temp);
+
                 }
-
-
+                tempList.add(counter, temp);
             }
             return tempList;
         } catch (SQLException e) {
@@ -237,7 +236,7 @@ public class ReimbursementDAO {
 
             updater= con.prepareStatement(updateStatus);
             updater.setString(1, unprocessedReimbursement.getStatus().toString());
-            updater.setInt(1, unprocessedReimbursement.getStatusID());
+            updater.setInt(2, unprocessedReimbursement.getStatusID());
             updater.executeUpdate();
 
             updater= con.prepareStatement(updateRest);
@@ -245,7 +244,9 @@ public class ReimbursementDAO {
             updater.setTimestamp(2, unprocessedReimbursement.getCreationDate());
             updater.setTimestamp(3, unprocessedReimbursement.getResolutionDate());
             updater.setString(4, unprocessedReimbursement.getDescription());
-            updater.setInt(5, unprocessedReimbursement.getResolver().getId());
+            if(unprocessedReimbursement.getResolver().getId() != 0) {
+                updater.setInt(5, unprocessedReimbursement.getResolver().getId());
+            }else updater.setInt(5, unprocessedReimbursement.getAuthor().getId());
             updater.setInt(6, unprocessedReimbursement.getId());
             updater.executeUpdate();
 
