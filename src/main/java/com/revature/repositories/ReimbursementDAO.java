@@ -74,7 +74,7 @@ public class ReimbursementDAO {
             preparedStatement.setInt(1, temp.getReimbTypeID());
             ResultSet resultSet1=preparedStatement.executeQuery();
             while(resultSet1.next()){
-                temp.setReimbType(resultSet.getString(2));
+                temp.setReimbType(resultSet1.getString(2));
             }
             //store temp reimbursement into an optional and return the optional
             tempOp=Optional.ofNullable(temp);
@@ -93,11 +93,17 @@ public class ReimbursementDAO {
         List<Reimbursement>tempList= new ArrayList<Reimbursement>();
         Reimbursement temp = new Reimbursement();
         String getStatus = "SELECT * FROM ers_reimbursement_status WHERE reimb_status =?";
+        String getReimb = "SELECT * FROM ers_reimbursement WHERE reimb_status_id =?";
         try {
+            //Get the Reimbursements that are of the desired status
             PreparedStatement preparedStatement= con.prepareStatement(getStatus);
             preparedStatement.setString(1, status.toString());
             ResultSet resultSet= preparedStatement.executeQuery();
+            //While there are reimbursements with the desired status
             while(resultSet.next()){
+                //store their status and status id in the Reimbursement
+                int counter = resultSet.getRow()-1;
+                System.out.println(resultSet.getRow());
                 temp.setStatusID(resultSet.getInt(1));
                 String status2= resultSet.getString(2);
                 switch (status2){
@@ -111,28 +117,31 @@ public class ReimbursementDAO {
                         temp.setStatus(Status.DENIED);
                         break;
                 }
-                String getReimb = "SELECT * FROM ers_reimbursement WHERE reimb_status_id =?";
+                //Then get the reimbursement with the matching status ID
                 preparedStatement= con.prepareStatement(getReimb);
                 preparedStatement.setInt(1, temp.getStatusID());
-                ResultSet resultSet1= preparedStatement.executeQuery();
-                while(resultSet1.next()){
-                    temp.setId(resultSet1.getInt(1));
-                    temp.setAmount(resultSet1.getDouble(2));
-                    temp.setCreationDate(resultSet1.getTimestamp(3));
-                    temp.setResolutionDate(resultSet1.getTimestamp(4));
-                    temp.setDescription(resultSet1.getString(5));
-                    temp.setAuthor(userService.getByUserID(resultSet1.getInt(7)).get());
-                    temp.setResolver(userService.getByUserID(resultSet1.getInt(8)).get());
-                    temp.setReimbTypeID(resultSet1.getInt(10));
+                ResultSet reimbInfo= preparedStatement.executeQuery();
+                //Store the reimb info in that reimb
+                while(reimbInfo.next()){
+                    temp.setId(reimbInfo.getInt("reimb_id"));
+                    temp.setAmount(reimbInfo.getDouble("reimb_ammount"));
+                    temp.setCreationDate(reimbInfo.getTimestamp("reimb_submitted"));
+                    temp.setResolutionDate(reimbInfo.getTimestamp(4));
+                    temp.setDescription(reimbInfo.getString(5));
+                    temp.setAuthor(userService.getByUserID(reimbInfo.getInt(7)).get());
+                    temp.setResolver(userService.getByUserID(reimbInfo.getInt(8)).get());
+                    temp.setReimbTypeID(reimbInfo.getInt(10));
                 }
                 String getReimType = "SELECT reimb_type FROM ers_reimbursement_type WHERE reimb_type_id=?";
                 preparedStatement=con.prepareStatement(getReimType);
                 preparedStatement.setInt(1, temp.getReimbTypeID());
                 ResultSet resultSet2= preparedStatement.executeQuery();
                 while(resultSet2.next()){
-                    temp.setReimbType(resultSet2.getString(2));
+                    temp.setReimbType(resultSet2.getString(1));
+                    tempList.add(counter, temp);
                 }
-                tempList.add(temp);
+
+
             }
             return tempList;
         } catch (SQLException e) {
@@ -151,10 +160,10 @@ public class ReimbursementDAO {
     public Reimbursement create(Reimbursement newReimb){
         String storeType= "INSERT INTO ers_reimbursement_type (reimb_type) VALUES(?)";
         String storeStatus= "INSERT INTO ers_reimbursement_status (reimb_status) VALUES(?)";
-        String storeReimb= "INSERT INTO ers_reimbursement (reimb_ammount, reimb_submitted, reimb_resolved, reimb_description, reimb_author, reimb_resolver) VALUES(?, ?, ?, ?, ?, ?)";
-        String loadInTypeID= "UPDATE ers_reimbursement SET reimb_type_id = ers_reimbursement_type.reimb_type_id FROM ers_reimbursement_type WHERE reimb_type_id = ers_reimbursement_type.reimb_type_id";
+        String storeReimb= "INSERT INTO ers_reimbursement (reimb_ammount, reimb_submitted, reimb_resolved, reimb_description, reimb_author) VALUES(?, ?, ?, ?, ?)";
+        String loadInTypeID= "UPDATE ers_reimbursement SET reimb_type_id = ers_reimbursement_type.reimb_type_id FROM ers_reimbursement_type WHERE ers_reimbursement.reimb_type_id = ers_reimbursement_type.reimb_type_id";
         String getTypeID="SELECT reimb_type_id FROM ers_reimbursement WHERE reimb_id=?";
-        String loadInStatusID="UPDATE ers_reimbursement SET reimb_status_id = ers_reimbursement_status.reimb_status_id FROM ers_reimbursement_status WHERE reimb_status_id = ers_reimbursement_status.reimb_status_id";
+        String loadInStatusID="UPDATE ers_reimbursement SET reimb_status_id = ers_reimbursement_status.reimb_status_id FROM ers_reimbursement_status WHERE ers_reimbursement.reimb_status_id = ers_reimbursement_status.reimb_status_id";
         String getStatusID="SELECT reimb_status_id FROM ers_reimbursement WHERE reimb_id=?";
         String loadID="SELECT reimb_id FROM ers_reimbursement WHERE reimb_id=?";
         try {
@@ -173,7 +182,7 @@ public class ReimbursementDAO {
             preparedStatement.setTimestamp(3, newReimb.getResolutionDate());
             preparedStatement.setString(4, newReimb.getDescription());
             preparedStatement.setInt(5, newReimb.getAuthor().getId());
-            preparedStatement.setInt(6, newReimb.getResolver().getId());
+            //preparedStatement.setInt(6, newReimb.getResolver().getId());
             preparedStatement.executeUpdate();
             //Store and get the StatusID into the Reimbursement
             preparedStatement= con.prepareStatement(loadInStatusID);
@@ -217,7 +226,35 @@ public class ReimbursementDAO {
      * </ul>
      */
     public Reimbursement update(Reimbursement unprocessedReimbursement) {
-    	return unprocessedReimbursement;
+        String updateType="UPDATE ers_reimbursement_type SET reimb_type =? WHERE reimb_type_id=?";
+        String updateStatus="UPDATE ers_reimbursement_status SET reimb_status=? WHERE reimb_status_id=?";
+        String updateRest="UPDATE ers_reimbursement SET reimb_ammount=?, reimb_submitted=?, reimb_resolved=?, reimb_description=?, reimb_resolver=? WHERE reimb_id=?";
+        try {
+            PreparedStatement updater = con.prepareStatement(updateType);
+            updater.setString(1, unprocessedReimbursement.getReimbType());
+            updater.setInt(2, unprocessedReimbursement.getReimbTypeID());
+            updater.executeUpdate();
+
+            updater= con.prepareStatement(updateStatus);
+            updater.setString(1, unprocessedReimbursement.getStatus().toString());
+            updater.setInt(1, unprocessedReimbursement.getStatusID());
+            updater.executeUpdate();
+
+            updater= con.prepareStatement(updateRest);
+            updater.setDouble(1, unprocessedReimbursement.getAmount());
+            updater.setTimestamp(2, unprocessedReimbursement.getCreationDate());
+            updater.setTimestamp(3, unprocessedReimbursement.getResolutionDate());
+            updater.setString(4, unprocessedReimbursement.getDescription());
+            updater.setInt(5, unprocessedReimbursement.getResolver().getId());
+            updater.setInt(6, unprocessedReimbursement.getId());
+            updater.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            //throw exception here
+        }
+
+        return unprocessedReimbursement;
     }
 
     /**
@@ -231,13 +268,13 @@ public class ReimbursementDAO {
         String statusDelete= "DELETE FROM ers_reimbursement_status WHERE reimb_status_id=?";
         String reimbDelete ="DELETE FROM ers_reimbursement WHERE reimb_id=?";
         try {
-            PreparedStatement preparedStatement= con.prepareStatement(typeDelete);
+            PreparedStatement preparedStatement= con.prepareStatement(reimbDelete);
             preparedStatement.setInt(1, reimbToDelete.getReimbTypeID());
             preparedStatement.executeUpdate();
             preparedStatement= con.prepareStatement(statusDelete);
             preparedStatement.setInt(1, reimbToDelete.getStatusID());
             preparedStatement.executeUpdate();
-            preparedStatement= con.prepareStatement(reimbDelete);
+            preparedStatement= con.prepareStatement(typeDelete);
             preparedStatement.setInt(1, reimbToDelete.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

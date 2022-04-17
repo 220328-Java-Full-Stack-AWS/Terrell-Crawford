@@ -44,7 +44,10 @@ public class ReimbursementService {
      * After processing, the reimbursement will have its status changed to either APPROVED or DENIED.
      */
     public Reimbursement process(Reimbursement unprocessedReimbursement, Status finalStatus, User resolver) {
-        return null;
+        unprocessedReimbursement.setStatus(finalStatus);
+        unprocessedReimbursement.setResolver(resolver);
+        unprocessedReimbursement=reimbDAO.update(unprocessedReimbursement);
+        return unprocessedReimbursement;
     }
 
     public Reimbursement create(Reimbursement reimbToBeCreated){

@@ -60,19 +60,46 @@ public class Driver {
              }else{
                  System.out.println("Press 1 to create a new Reimbursement Request, 2 to view Past & Pending Reimbursement Request");
                  userIn= scan.next();
+                 //create new Reimbursement
                  if(userIn.equals("1")){
+                     System.out.println("Please enter the amount you are requesting(Just put the value, no $)");
+                     userNumb=scan.nextDouble();
+                     Reimbursement newReimb= new Reimbursement();
+                     newReimb.setAmount(userNumb);
+                     System.out.println("Press 1 for Lodging Reimbursement, 2 for Food Reimbursement, or 3 for Travel Reimbursement");
+                     userIn= scan.next();
+                     if(userIn.equals("1")) {
+                         newReimb.setReimbType("LODGING");
+                     }else if(userIn.equals("2")){
+                         newReimb.setReimbType("FOOD");
+                     }else if(userIn.equals("3"))newReimb.setReimbType("TRAVEL");
+                     System.out.println("Please enter a description for this request");
+                     userIn=scan.nextLine();
+                     while(userIn==null);
+                     newReimb.setDescription(userIn);
+                     LocalDateTime now= LocalDateTime.now();
+                     Timestamp today= Timestamp.valueOf(now);
+                     newReimb.setCreationDate(today);
+                     newReimb.setAuthor(currentUser);
+                     newReimb.setStatus(Status.PENDING);
+                     System.out.println("Attempting to create New Request");
+                     newReimb=reimbServ.create(newReimb);
 
+
+                 //Viewing Options for Past&Pending
                  }else if(userIn.equals("2")){
                      System.out.println("Press 1 to view pending Requests, 2 to see Completed Requests");
                      userIn= scan.next();
                      //View pending requests
                      if(userIn.equals("1")){
                          List<Reimbursement>pending=reimbServ.getReimbursementsByStatus(Status.PENDING);
-                         for(Reimbursement r :pending){
-                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" was made on "+r.getCreationDate());
+                         System.out.println(pending);
+                         for(Reimbursement r : pending){
+                             System.out.println("Reimbursement ID:"+r.getId()+" Request of $ "+r.getAmount()+"for "+r.getReimbType()+" was made on "+r.getCreationDate());
                          }
                          System.out.println("Press 1 to edit a Request, 2 to cancel a request");
                          userIn= scan.next();
+                         //Update Reimbursement
                          if(userIn.equals("1")){
                              System.out.println("Please enter the ID (The number after Reimbursement ID) of Request you wold like to edit");
                              userNum= scan.nextInt();
@@ -90,8 +117,9 @@ public class Driver {
                                  LocalDateTime now= LocalDateTime.now();
                                  Timestamp today= Timestamp.valueOf(now);
                                  newReimb.setCreationDate(today);
-                                 reimbServ.update(newReimb);
+                                 newReimb=reimbServ.update(newReimb);
                              }
+                         //Delete Reimbursement
                          }else if(userIn.equals("2")){
                              System.out.println("Please enter the ID (The number after Reimbursement ID) of Request you wold like to delete");
                              userNum= scan.nextInt();
