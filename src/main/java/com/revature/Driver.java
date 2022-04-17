@@ -54,7 +54,62 @@ public class Driver {
                  System.out.println("Press 1 to view ALL Reimbursement Requests, 2 to View Reimbursement by status, logout");
                  userIn= scan.next();
                  if(userIn.equals("1")){
-
+                     List<Reimbursement> approved=reimbServ.getReimbursementsByStatus(Status.APPROVED);
+                     List<Reimbursement> denied=reimbServ.getReimbursementsByStatus(Status.DENIED);
+                     List<Reimbursement>pending=reimbServ.getReimbursementsByStatus(Status.PENDING);
+                     for(Reimbursement r : pending){
+                         System.out.println("Reimbursement ID:"+r.getId()+" Request of $ "+r.getAmount()+" for "+r.getReimbType()+" was made on "+r.getCreationDate()+" by "+r.getAuthor().getUsername()+" and is waiting on approval");
+                     }
+                     for(Reimbursement r :approved){
+                         System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+" for "+r.getReimbType()+" on "+r.getCreationDate()+" was made by "+r.getAuthor().getUsername()+" and was "+r.getStatus().toString()+" by "+r.getResolver().getUsername()+" on "+r.getResolutionDate());
+                     }
+                     for(Reimbursement r :denied){
+                         System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" on "+r.getCreationDate()+" was made by "+r.getAuthor().getUsername()+" and was "+r.getStatus().toString()+" by "+r.getResolver().getUsername()+" on "+r.getResolutionDate());
+                     }
+                 }else if(userIn.equals("2")){
+                     System.out.println("Press 1 to view Pending requests, 2 to view previously approved requests, or 3 to view previously denied requests");
+                     userIn=scan.next();
+                     if(userIn.equals("1")){
+                         List<Reimbursement>pending=reimbServ.getReimbursementsByStatus(Status.PENDING);
+                         for(Reimbursement r : pending){
+                             System.out.println("Reimbursement ID:"+r.getId()+" Request of $ "+r.getAmount()+"for "+r.getReimbType()+" was made on "+r.getCreationDate()+" by "+r.getAuthor().getUsername());
+                         }
+                         System.out.println("Press 1, to approve a request, or 2 to deny a request");
+                         userIn= scan.next();
+                         if(userIn.equals("1")){
+                             System.out.println("Please enter the ID (The number after Reimbursement ID) of Request you wold like to approve");
+                             userNum= scan.nextInt();
+                             Optional<Reimbursement> temp = reimbServ.getReimbursementByID(userNum);
+                             if(temp.get().getId() == 0){
+                                 //throw exception
+                             }else{
+                                 Reimbursement newReimb= temp.get();
+                                 System.out.println("Attempting to process request");
+                                 newReimb=reimbServ.process(newReimb,Status.APPROVED, currentUser);
+                             }
+                         }else if(userIn.equals("2")){
+                             System.out.println("Please enter the ID (The number after Reimbursement ID) of Request you wold like to deny");
+                             userNum= scan.nextInt();
+                             Optional<Reimbursement>temp = reimbServ.getReimbursementByID(userNum);
+                             if(temp.get().getId()==0){
+                                 //throw exception
+                             }else{
+                                 Reimbursement newReimb= temp.get();
+                                 System.out.println("Attempting to process request");
+                                 newReimb=reimbServ.process(newReimb,Status.DENIED, currentUser);
+                             }
+                         }
+                     }else if(userIn.equals("2")){
+                         List<Reimbursement> approved=reimbServ.getReimbursementsByStatus(Status.APPROVED);
+                         for(Reimbursement r :approved){
+                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+" for "+r.getReimbType()+" on "+r.getCreationDate()+" was made by "+r.getAuthor().getUsername()+" and was "+r.getStatus().toString()+" by "+r.getResolver().getUsername()+" on "+r.getResolutionDate());
+                         }
+                     }else if(userIn.equals("3")){
+                         List<Reimbursement> denied=reimbServ.getReimbursementsByStatus(Status.DENIED);
+                         for(Reimbursement r :denied){
+                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" on "+r.getCreationDate()+" was made by "+r.getAuthor().getUsername()+" and was "+r.getStatus().toString()+" by "+r.getResolver().getUsername()+" on "+r.getResolutionDate());
+                         }
+                     }
                  }
               //If Employee has logged in, present the appropriate menus
              }else{
@@ -84,7 +139,7 @@ public class Driver {
                      newReimb.setStatus(Status.PENDING);
                      System.out.println("Attempting to create New Request");
                      newReimb=reimbServ.create(newReimb);
-
+                     System.out.println("Reimbursement Request was successfully created");
 
                  //Viewing Options for Past&Pending
                  }else if(userIn.equals("2")){
@@ -135,10 +190,10 @@ public class Driver {
                          List<Reimbursement> approved=reimbServ.getReimbursementsByStatus(Status.APPROVED);
                          List<Reimbursement> denied=reimbServ.getReimbursementsByStatus(Status.DENIED);
                          for(Reimbursement r :approved){
-                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" on "+r.getCreationDate()+" was "+r.getStatus().toString()+" by "+r.getResolver()+" on "+r.getResolutionDate());
+                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+" for "+r.getReimbType()+" on "+r.getCreationDate()+" was "+r.getStatus().toString()+" by "+r.getResolver().getUsername()+" on "+r.getResolutionDate());
                          }
                          for(Reimbursement r :denied){
-                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+"for "+r.getReimbType()+" on "+r.getCreationDate()+" was "+r.getStatus().toString()+" by "+r.getResolver()+" on "+r.getResolutionDate());
+                             System.out.println("Reimbursement ID:"+r.getId()+"Request of $"+r.getAmount()+" for "+r.getReimbType()+" on "+r.getCreationDate()+" was "+r.getStatus().toString()+" by "+r.getResolver().getUsername()+" on "+r.getResolutionDate());
                          }
 
                      }

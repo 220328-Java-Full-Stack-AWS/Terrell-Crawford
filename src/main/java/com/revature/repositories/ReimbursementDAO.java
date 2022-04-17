@@ -1,6 +1,7 @@
 package com.revature.repositories;
 
 import com.revature.exceptions.UnableToCreateReimbursementException;
+import com.revature.exceptions.UnableToProcessException;
 import com.revature.models.Reimbursement;
 import com.revature.models.Role;
 import com.revature.models.Status;
@@ -91,16 +92,18 @@ public class ReimbursementDAO {
      */
     public List<Reimbursement> getByStatus(Status status) {
         List<Reimbursement>tempList= new ArrayList<Reimbursement>();
-        Reimbursement temp = new Reimbursement();
+
         String getStatus = "SELECT * FROM ers_reimbursement_status WHERE reimb_status =?";
         String getReimb = "SELECT * FROM ers_reimbursement WHERE reimb_status_id =?";
         try {
+
             //Get the Reimbursements that are of the desired status
             PreparedStatement preparedStatement= con.prepareStatement(getStatus);
             preparedStatement.setString(1, status.toString());
             ResultSet resultSet= preparedStatement.executeQuery();
             //While there are reimbursements with the desired status
             while(resultSet.next()){
+                Reimbursement temp = new Reimbursement();
                 //store their status and status id in the Reimbursement
                 int counter = resultSet.getRow()-1;
                 System.out.println(resultSet.getRow());
@@ -132,6 +135,7 @@ public class ReimbursementDAO {
                     temp.setResolver(userService.getByUserID(reimbInfo.getInt(8)).get());
                     temp.setReimbTypeID(reimbInfo.getInt(10));
                 }
+                //get and store the reimb type, and type id
                 String getReimType = "SELECT reimb_type FROM ers_reimbursement_type WHERE reimb_type_id=?";
                 preparedStatement=con.prepareStatement(getReimType);
                 preparedStatement.setInt(1, temp.getReimbTypeID());
@@ -140,6 +144,7 @@ public class ReimbursementDAO {
                     temp.setReimbType(resultSet2.getString(1));
 
                 }
+                System.out.println("This is from reimbDAO 144. temp is: " +temp);
                 tempList.add(counter, temp);
             }
             return tempList;
@@ -252,7 +257,7 @@ public class ReimbursementDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            //throw exception here
+            throw new UnableToProcessException("Unable to persists updates");
         }
 
         return unprocessedReimbursement;

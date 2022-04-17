@@ -1,11 +1,15 @@
 package com.revature.services;
 
+import com.revature.exceptions.UnableToProcessException;
 import com.revature.models.Reimbursement;
+import com.revature.models.Role;
 import com.revature.models.Status;
 import com.revature.models.User;
 import com.revature.repositories.ReimbursementDAO;
 import jdk.nashorn.internal.runtime.options.Option;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,10 +48,15 @@ public class ReimbursementService {
      * After processing, the reimbursement will have its status changed to either APPROVED or DENIED.
      */
     public Reimbursement process(Reimbursement unprocessedReimbursement, Status finalStatus, User resolver) {
-        unprocessedReimbursement.setStatus(finalStatus);
-        unprocessedReimbursement.setResolver(resolver);
-        unprocessedReimbursement=reimbDAO.update(unprocessedReimbursement);
-        return unprocessedReimbursement;
+        if(resolver.getRole()== Role.FINANCE_MANAGER) {
+            unprocessedReimbursement.setStatus(finalStatus);
+            unprocessedReimbursement.setResolver(resolver);
+            LocalDateTime now = LocalDateTime.now();
+            Timestamp today = Timestamp.valueOf(now);
+            unprocessedReimbursement.setResolutionDate(today);
+            unprocessedReimbursement = reimbDAO.update(unprocessedReimbursement);
+            return unprocessedReimbursement;
+        }else throw new UnableToProcessException("Only Finance Managers can process reimbursement request");
     }
 
     public Reimbursement create(Reimbursement reimbToBeCreated){
