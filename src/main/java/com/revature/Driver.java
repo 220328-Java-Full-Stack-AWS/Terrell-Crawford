@@ -1,5 +1,6 @@
 package com.revature;
 
+import com.revature.exceptions.UnableToProcessException;
 import com.revature.models.Reimbursement;
 import com.revature.models.Role;
 import com.revature.models.Status;
@@ -81,7 +82,7 @@ public class Driver {
                              userNum= scan.nextInt();
                              Optional<Reimbursement> temp = reimbServ.getReimbursementByID(userNum);
                              if(temp.get().getId() == 0){
-                                 //throw exception
+                                 throw new UnableToProcessException();
                              }else{
                                  Reimbursement newReimb= temp.get();
                                  System.out.println("Attempting to process request");
@@ -92,7 +93,7 @@ public class Driver {
                              userNum= scan.nextInt();
                              Optional<Reimbursement>temp = reimbServ.getReimbursementByID(userNum);
                              if(temp.get().getId()==0){
-                                 //throw exception
+                                 throw new UnableToProcessException();
                              }else{
                                  Reimbursement newReimb= temp.get();
                                  System.out.println("Attempting to process request");

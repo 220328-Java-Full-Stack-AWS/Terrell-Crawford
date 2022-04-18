@@ -44,4 +44,13 @@ public class UserService {
 		return temp;
 	}
 
+	public User updateUser(User userToBeUpdated){
+		User returnVal =uDAO.update(userToBeUpdated);
+		return returnVal;
+	}
+
+	public void deleteUser(User userToBeDeleted){
+		uDAO.delete(userToBeDeleted);
+	}
+
 }
