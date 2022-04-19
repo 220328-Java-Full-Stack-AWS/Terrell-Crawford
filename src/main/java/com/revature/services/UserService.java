@@ -21,7 +21,17 @@ import com.revature.repositories.UserDAO;
  * </ul>
  */
 public class UserService {
-	UserDAO uDAO = new UserDAO();
+	private final UserDAO uDAO;
+
+	public UserService(){
+		this.uDAO=new UserDAO();
+	}
+
+	public User create(User usertoCreate){
+		return uDAO.create(usertoCreate);
+	}
+
+
 	/**
 	 *     Should retrieve a User with the corresponding username or an empty optional if there is no match.
      */
@@ -45,8 +55,7 @@ public class UserService {
 	}
 
 	public User updateUser(User userToBeUpdated){
-		User returnVal =uDAO.update(userToBeUpdated);
-		return returnVal;
+		return uDAO.update(userToBeUpdated);
 	}
 
 	public void deleteUser(User userToBeDeleted){

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -35,13 +36,14 @@ public class ConnectionFactory {
         return instance;
     }
 
-    /*public static void closeConnection(){
+    public static void closeConnection(){
         try {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }*/
+        instance=null;
+    }
 
     /**
      * <p>The {@link ConnectionFactory#getConnection()} method is responsible for leveraging a specific Database Driver to obtain an instance of the {@link java.sql.Connection} interface.</p>
@@ -49,6 +51,7 @@ public class ConnectionFactory {
      */
     // Code required to actually connect to the Database
     public Connection getConnection() {
+       /*
         //Creates a Hashtable to store values and gets the context of the current thread
         Properties props = new Properties();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -74,6 +77,7 @@ public class ConnectionFactory {
         try {
             connection = DriverManager.getConnection(connectionString, username, password);
         } catch (SQLException e) {
+
             System.out.println("Error connecting to Kyle's Database");
             e.printStackTrace();
         }
@@ -81,5 +85,42 @@ public class ConnectionFactory {
         System.out.println("Connection String: " + connectionString);
 
         return connection;
+    }*/
+
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            //New method grabbing the properties from the JAR classpath
+            Properties props = new Properties();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream input = loader.getResourceAsStream("application.properties");
+            props.load(input);
+
+
+            String connectionString = "jdbc:postgresql://" +
+                    props.getProperty("hostname") + ":" +
+                    props.getProperty("port") + "/" +
+                    props.getProperty("dbname") + "?schemaName=" +
+                    props.getProperty("schemaName");
+
+            String username = props.getProperty("username");
+            String password = props.getProperty("password");
+
+            connection = DriverManager.getConnection(connectionString, username, password);
+
+            //Set search path to access different schemas:
+            String sql = "set search_path to \"$user\", public, test";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.executeUpdate();
+
+            System.out.println("Connection String: " + connectionString);
+        } catch (IOException | SQLException | ClassNotFoundException e) {
+            System.out.println("Error connecting to Kyle's Database");
+            e.printStackTrace();
+        }
+
+
+        return connection;
+
     }
 }
