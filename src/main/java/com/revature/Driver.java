@@ -22,12 +22,14 @@ public class Driver {
         //Services
         ReimbursementService reimbServ = new ReimbursementService();
         AuthService loginCheck= new AuthService();
-        String userIn;
-        int userNum;
-        double userNumb;
         UserService userService= new UserService();
+
+        String userIn;
         String username;
         String pass;
+        int userNum;
+        double userNumb;
+
         //Using console as UI until we go over how to make a web UI
 
         //Setup Scanner for early UI implementation
