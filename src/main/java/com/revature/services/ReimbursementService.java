@@ -48,7 +48,7 @@ public class ReimbursementService {
      * After processing, the reimbursement will have its status changed to either APPROVED or DENIED.
      */
     public Reimbursement process(Reimbursement unprocessedReimbursement, Status finalStatus, User resolver) {
-        if(resolver.getRole()== Role.FINANCE_MANAGER) {
+        if(resolver.getRole()== Role.FINANCE_MANAGER&&unprocessedReimbursement.getStatus()==Status.PENDING) {
             unprocessedReimbursement.setStatus(finalStatus);
             unprocessedReimbursement.setResolver(resolver);
             LocalDateTime now = LocalDateTime.now();
@@ -56,7 +56,7 @@ public class ReimbursementService {
             unprocessedReimbursement.setResolutionDate(today);
             unprocessedReimbursement = reimbDAO.update(unprocessedReimbursement);
             return unprocessedReimbursement;
-        }else throw new UnableToProcessException("Only Finance Managers can process reimbursement request");
+        }else throw new UnableToProcessException("Only Finance Managers can process reimbursement request. And only PENDING requests may be processed");
     }
 
     public Reimbursement create(Reimbursement reimbToBeCreated){

@@ -1,6 +1,8 @@
 package com.revature.repositories;
 
+import com.revature.exceptions.NoSuchReimbursementException;
 import com.revature.exceptions.UnableToCreateReimbursementException;
+import com.revature.exceptions.UnableToDeleteException;
 import com.revature.exceptions.UnableToProcessException;
 import com.revature.models.Reimbursement;
 import com.revature.models.Role;
@@ -147,9 +149,14 @@ public class ReimbursementDAO {
                 System.out.println("This is from reimbDAO 144. temp is: " +temp);
                 tempList.add(counter, temp);
             }
-            return tempList;
-        } catch (SQLException e) {
+            if(tempList.size()!=0) {
+                return tempList;
+            }else if(tempList.size()==0){
+                return Collections.emptyList();
+            }
+        } catch (SQLException e){
             e.printStackTrace();
+            throw new NoSuchReimbursementException();
         }
         return Collections.emptyList();
     }
@@ -285,7 +292,7 @@ public class ReimbursementDAO {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-
+            throw new UnableToDeleteException();
         }
     }
 }
