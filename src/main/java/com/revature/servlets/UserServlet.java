@@ -56,7 +56,8 @@ public class UserServlet extends HttpServlet {
     //This is the CREATE operation
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User currentUser = mapper.readValue(req.getInputStream(), User.class);;
+        User currentUser = mapper.readValue(req.getInputStream(), User.class);
+        System.out.println(currentUser.getUsername());
         try {
             //logging in a User that's already in the DB
             if(req.getHeader("userIsTryingTo").equals("login")){
