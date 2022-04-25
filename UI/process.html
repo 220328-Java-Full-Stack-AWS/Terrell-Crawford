@@ -45,6 +45,7 @@
         localStorage.setItem("rId", token);
         localStorage.setItem("decision", "DENIED");
         let reimbUpdate = {
+            id: document.getElementById("EyeD").value,
             status: "DENIED"
         }
         let response = await processReimbursement(reimbUpdate);
