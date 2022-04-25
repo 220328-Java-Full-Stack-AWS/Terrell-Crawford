@@ -29,7 +29,8 @@
         <button onclick="submitForm()">Login</button>
         <button onclick="goToRegister()">Register</button>
     </div>
-    <script>function goToRegister() {
+    <script>
+        function goToRegister() {
             window.location.href = "./register.html"
         }
     </script>
@@ -70,9 +71,14 @@
                 and storing it in localStorage.
                 */
                 let token = response.headers.get("authToken");
+                let token2 = response.headers.get("userIs");
                 console.log("authToken received: ", token);//fact finding
                 localStorage.setItem("authToken", token);
 
+
+
+
+                localStorage.setItem("userIs", token2);
                 //navigate the window to the landing page
                 window.location.href = "./index.html";
 

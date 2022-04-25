@@ -48,7 +48,7 @@ public class ReimbursementService {
      * After processing, the reimbursement will have its status changed to either APPROVED or DENIED.
      */
     public Reimbursement process(Reimbursement unprocessedReimbursement, Status finalStatus, User resolver) {
-        if(resolver.getRole()== Role.FINANCE_MANAGER&&unprocessedReimbursement.getStatus()==Status.PENDING) {
+        if(resolver.getRole()== Role.FINANCE_MANAGER && unprocessedReimbursement.getStatus()==Status.PENDING) {
             unprocessedReimbursement.setStatus(finalStatus);
             unprocessedReimbursement.setResolver(resolver);
             LocalDateTime now = LocalDateTime.now();

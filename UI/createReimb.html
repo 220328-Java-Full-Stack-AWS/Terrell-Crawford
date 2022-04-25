@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="contentBox">
+        <div class="flexColumn">
+            <div class="flexRow">
+                <label>Amount (leave out the $): </label>
+                <input type="text" id="amount" placeholder="420.69" name="Amount">
+            </div>
+            <div class="flexRow">
+                <label>Type of Reimbursement: </label>
+                <input type="text" id="reimbType" placeholder="LODGING" name="Type">
+            </div>
+            <div class="flexRow">
+                <label>Description: </label>
+                <input type="text" id="Description" placeholder="Describe and explain the request" name="Description">
+            </div>
+
+            <!-- onclick="submitForm()" hooks into our javascript, calling the funciton below -->
+            <button id="contentBoxButton" onclick="submitCreation()">Register</button>
+        </div>
+
+
+    </div>
+    <script src="./scripts/reimbursementConnection.js"></script>
+
+    <script>
+        async function submitCreation() {
+            let newReimb = {
+                amount: document.getElementById("amount").value,
+                description: document.getElementById("Description").value,
+                reimbType: document.getElementById("reimbType").value,
+                status: "PENDING"
+            }
+            let response = await newReimbursement(newReimb);
+            if (response.status == 201) {
+                window.location.href = "./index.html"
+
+            } else {
+                alert("Unable to create reimbursement!");
+            }
+        }
+    </script>
+</body>
+
+</html>

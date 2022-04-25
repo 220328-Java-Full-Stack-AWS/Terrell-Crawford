@@ -7,6 +7,7 @@ import com.revature.models.Role;
 import com.revature.models.Status;
 import com.revature.services.ReimbursementService;
 import com.revature.services.UserService;
+import org.json.JSONArray;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,141 +30,85 @@ public class ReimbursementServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getHeader("rMethodToBeCalled");
+
+        System.out.println(req.getHeader("rMethodToBeCalled"));
         try {
             if (req.getHeader("rMethodToBeCalled").equals("id")) {
-                Reimbursement reimb = rServ.getReimbursementByID(Integer.parseInt(req.getHeader("id"))).get();
+                Reimbursement reimb = rServ.getReimbursementByID(Integer.parseInt(req.getHeader("Id"))).get();
+                System.out.println(reimb);
                 String json = mapper.writeValueAsString(reimb);
                 resp.setContentType("application/json");
                 resp.getWriter().print(json);
                 resp.setStatus(200);
             } else if (req.getHeader("rMethodToBeCalled").equals("status")) {
-                req.getHeader("authToken");
+                System.out.println(req.getHeader("authToken"));
+                String AuthToken= "";
+                AuthToken = req.getHeader("authToken");
                 if (uServ.getByUsername(req.getHeader("authToken")).get().getRole() == Role.EMPLOYEE) {
-                    List<Reimbursement> reimbursementListA = new ArrayList<>();
-                    List<Reimbursement> reimbursementListD = new ArrayList<>();
-                    List<Reimbursement> reimbursementListP = new ArrayList<>();
-                    switch (req.getHeader("status")) {
+                    System.out.println("We Got here");
+                    System.out.println(req.getHeader("Status"));
+                    switch(req.getHeader("Status")) {
                         case "PENDING":
-                            reimbursementListP = rServ.getReimbursementsByStatus(Status.PENDING);
-                            for (Reimbursement r : reimbursementListP) {
-                                if (r.getAuthor().getId() == uServ.getByUsername(req.getHeader("authToken")).get().getId()) {
-                                    String json = mapper.writeValueAsString(r);
-                                    resp.setContentType("application/json");
-                                    resp.getWriter().print(json);
+                            List<Reimbursement> reimbList = rServ.getReimbursementsByStatus(Status.PENDING);
+                            ArrayList<Reimbursement> tempList = new ArrayList<Reimbursement>();
+                            for(Reimbursement r:reimbList){
+                                if(uServ.getByUsername(req.getHeader("authToken")).get().equals(r.getAuthor())){
+                                    tempList.add(r);
                                 }
                             }
+                            JSONArray jsonArray= new JSONArray(tempList);
+                            resp.getWriter().print(jsonArray);
                             resp.setStatus(200);
                             break;
+
                         case "APPROVED":
-                            reimbursementListA = rServ.getReimbursementsByStatus(Status.APPROVED);
-                            for (Reimbursement r : reimbursementListA) {
-                                if (r.getAuthor().getId() == uServ.getByUsername(req.getHeader("authToken")).get().getId()) {
-                                    String json = mapper.writeValueAsString(r);
-                                    resp.setContentType("application/json");
-                                    resp.getWriter().print(json);
+                            List<Reimbursement> reimbListA = rServ.getReimbursementsByStatus(Status.APPROVED);
+                            ArrayList<Reimbursement> tempListA = new ArrayList<Reimbursement>();
+                            for(Reimbursement r:reimbListA){
+                                if(uServ.getByUsername(req.getHeader("authToken")).get().equals(r.getAuthor())){
+                                    tempListA.add(r);
                                 }
                             }
+                            System.out.println(tempListA);
+                            JSONArray jsonArrayA= new JSONArray(tempListA);
+                            resp.getWriter().print(jsonArrayA);
                             resp.setStatus(200);
                             break;
+
                         case "DENIED":
-                            reimbursementListD = rServ.getReimbursementsByStatus(Status.DENIED);
-                            for (Reimbursement r : reimbursementListD) {
-                                if (r.getAuthor().getId() == uServ.getByUsername(req.getHeader("authToken")).get().getId()) {
-                                    String json = mapper.writeValueAsString(r);
-                                    resp.setContentType("application/json");
-                                    resp.getWriter().print(json);
+                            List<Reimbursement> reimbListD = rServ.getReimbursementsByStatus(Status.DENIED);
+                            ArrayList<Reimbursement> tempListD = new ArrayList<Reimbursement>();
+                            for(Reimbursement r:reimbListD){
+                                if(uServ.getByUsername(req.getHeader("authToken")).get().equals(r.getAuthor())){
+                                    tempListD.add(r);
                                 }
                             }
-                            resp.setStatus(200);
-                            break;
-                        case "ALL":
-                            reimbursementListP = rServ.getReimbursementsByStatus(Status.PENDING);
-                            reimbursementListD = rServ.getReimbursementsByStatus(Status.DENIED);
-                            reimbursementListA = rServ.getReimbursementsByStatus(Status.APPROVED);
-                            for (Reimbursement r : reimbursementListP) {
-                                if (r.getAuthor().getId() == uServ.getByUsername(req.getHeader("authToken")).get().getId()) {
-                                    String json = mapper.writeValueAsString(r);
-                                    resp.setContentType("application/json");
-                                    resp.getWriter().print(json);
-                                }
-                            }
-                            for (Reimbursement r : reimbursementListA) {
-                                if (r.getAuthor().getId() == uServ.getByUsername(req.getHeader("authToken")).get().getId()) {
-                                    String json = mapper.writeValueAsString(r);
-                                    resp.setContentType("application/json");
-                                    resp.getWriter().print(json);
-                                }
-                            }
-                            for (Reimbursement r : reimbursementListD) {
-                                if (r.getAuthor().getId() == uServ.getByUsername(req.getHeader("authToken")).get().getId()) {
-                                    String json = mapper.writeValueAsString(r);
-                                    resp.setContentType("application/json");
-                                    resp.getWriter().print(json);
-                                }
-                            }
+                            JSONArray jsonArrayD= new JSONArray(tempListD);
+                            resp.getWriter().print(jsonArrayD);
                             resp.setStatus(200);
                             break;
                     }
                 } else if (uServ.getByUsername(req.getHeader("authToken")).get().getRole() == Role.FINANCE_MANAGER) {
-                    List<Reimbursement> reimbursementListA = new ArrayList<>();
-                    List<Reimbursement> reimbursementListD = new ArrayList<>();
-                    List<Reimbursement> reimbursementListP = new ArrayList<>();
-                    switch (req.getHeader("status")) {
-                        case "PENDING":
-                            reimbursementListP = rServ.getReimbursementsByStatus(Status.PENDING);
-                            for (Reimbursement r : reimbursementListP) {
-                                String json = mapper.writeValueAsString(r);
-                                resp.setContentType("application/json");
-                                resp.getWriter().print(json);
-                            }
-                            resp.setStatus(200);
-                            break;
-                        case "APPROVED":
-                            reimbursementListA = rServ.getReimbursementsByStatus(Status.APPROVED);
-                            for (Reimbursement r : reimbursementListA) {
-                                String json = mapper.writeValueAsString(r);
-                                resp.setContentType("application/json");
-                                resp.getWriter().print(json);
-
-                            }
-                            resp.setStatus(200);
-                            break;
-                        case "DENIED":
-                            reimbursementListD = rServ.getReimbursementsByStatus(Status.DENIED);
-                            for (Reimbursement r : reimbursementListD) {
-                                String json = mapper.writeValueAsString(r);
-                                resp.setContentType("application/json");
-                                resp.getWriter().print(json);
-
-                            }
-                            resp.setStatus(200);
-                            break;
-                        case "ALL":
-                            reimbursementListP = rServ.getReimbursementsByStatus(Status.PENDING);
-                            reimbursementListD = rServ.getReimbursementsByStatus(Status.DENIED);
-                            reimbursementListA = rServ.getReimbursementsByStatus(Status.APPROVED);
-                            for (Reimbursement r : reimbursementListP) {
-                                String json = mapper.writeValueAsString(r);
-                                resp.setContentType("application/json");
-                                resp.getWriter().print(json);
-
-                            }
-                            for (Reimbursement r : reimbursementListA) {
-                                String json = mapper.writeValueAsString(r);
-                                resp.setContentType("application/json");
-                                resp.getWriter().print(json);
-
-                            }
-                            for (Reimbursement r : reimbursementListD) {
-                                String json = mapper.writeValueAsString(r);
-                                resp.setContentType("application/json");
-                                resp.getWriter().print(json);
-
-                            }
-                            resp.setStatus(200);
-                            break;
-                    }
+                      switch(req.getHeader("Status")){
+                          case "PENDING":
+                              List<Reimbursement>reimbList= rServ.getReimbursementsByStatus(Status.PENDING);
+                              JSONArray jsonArray=new JSONArray(reimbList);
+                              resp.getWriter().print(jsonArray);
+                              resp.setStatus(200);
+                              break;
+                          case "APPROVED":
+                              List<Reimbursement>reimbListA= rServ.getReimbursementsByStatus(Status.APPROVED);
+                              JSONArray jsonArrayA=new JSONArray(reimbListA);
+                              resp.getWriter().print(jsonArrayA);
+                              resp.setStatus(200);
+                              break;
+                          case "DENIED":
+                              List<Reimbursement>reimbListD= rServ.getReimbursementsByStatus(Status.DENIED);
+                              JSONArray jsonArrayD=new JSONArray(reimbListD);
+                              resp.getWriter().print(jsonArrayD);
+                              resp.setStatus(200);
+                              break;
+                      }
                 }
             }
         }catch(NoSuchReimbursementException e){
@@ -193,24 +138,40 @@ public class ReimbursementServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Reimbursement reimb =  mapper.readValue(req.getInputStream(), Reimbursement.class);
+        Reimbursement tempReimb =  mapper.readValue(req.getInputStream(), Reimbursement.class);
+        Reimbursement reimb= rServ.getReimbursementByID(Integer.parseInt(req.getHeader("rId"))).get();
         try {
             if (req.getHeader("reimbIsBeing").equals("processed")) {
                 switch(req.getHeader("decision")){
                     case "DENIED":
-                        reimb=rServ.process(reimb, Status.DENIED, uServ.getByUsername(req.getHeader("authToken")).get());
+                        //reimb=rServ.process(reimb, Status.DENIED, uServ.getByUsername(req.getHeader("authToken")).get());
+                        reimb.setStatus(Status.DENIED);
+                        reimb.setResolver(uServ.getByUsername(req.getHeader("authToken")).get());
+                        LocalDateTime now = LocalDateTime.now();
+                        Timestamp today = Timestamp.valueOf(now);
+                        reimb.setResolutionDate(today);
+                        reimb=rServ.update(reimb);
                         String json = mapper.writeValueAsString(reimb);
                         resp.setStatus(200);
                         resp.getWriter().print(json);
                         break;
                     case "APPROVED":
-                        reimb=rServ.process(reimb, Status.APPROVED, uServ.getByUsername(req.getHeader("authToken")).get());
+                        //reimb=rServ.process(reimb, Status.APPROVED, uServ.getByUsername(req.getHeader("authToken")).get());
+                        reimb.setStatus(Status.APPROVED);
+                        reimb.setResolver(uServ.getByUsername(req.getHeader("authToken")).get());
+                        LocalDateTime now1 = LocalDateTime.now();
+                        Timestamp today1 = Timestamp.valueOf(now1);
+                        reimb.setResolutionDate(today1);
+                        reimb=rServ.update(reimb);
                         String json1 = mapper.writeValueAsString(reimb);
                         resp.setStatus(200);
                         resp.getWriter().print(json1);
                         break;
                     }
             }else if(req.getHeader("reimbIsBeing").equals("updated")) {
+                reimb.setAmount(tempReimb.getAmount());
+                reimb.setDescription(tempReimb.getDescription());
+                reimb.setReimbType(tempReimb.getReimbType());
                 reimb = rServ.update(reimb);
                 String json = mapper.writeValueAsString(reimb);
                 resp.setStatus(200);
@@ -224,7 +185,8 @@ public class ReimbursementServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            rServ.delete(rServ.getReimbursementByID(Integer.parseInt(req.getHeader("id"))).get());
+            String temp = req.getHeader("rId");
+            rServ.delete(rServ.getReimbursementByID(Integer.parseInt(req.getHeader("rId"))).get());
             resp.setStatus(200);
         }catch(UnableToDeleteException e){
             resp.setStatus(409);

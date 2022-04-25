@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Reimbursement</title>
+</head>
+<h1 id="MiddleText">Edit your request below</h1>
+
+<body>
+    <div class="contentBox">
+        <div class="flexColumn">
+            <div class="flexRow">
+                <label>Enter the Reimbursement Id (The number that was under Reimbursement ID on the table): </label>
+                <input type="text" id="EyeD" placeholder="1" name="1">
+            </div>
+            <div class="flexRow">
+                <label>Enter Amount (Leave out the $): </label>
+                <input type="text" id="amount" placeholder="69.00" name="50">
+            </div>
+            <div class="flexRow">
+                <label>Enter Type: </label>
+                <input type="text" id="type" placeholder="LODGING" name="Lodging">
+            </div>
+            <div class="flexRow">
+                <label>Enter Description: </label>
+                <textarea name="Description" id="description" cols="50" rows="10"></textarea>
+
+            </div>
+
+        </div>
+        <button id="SubmitReimbUpdate" onclick="submitReimbUpdate()">Submit Update(s)</button>
+    </div>
+</body>
+<script src="./scripts/reimbursementConnection.js"></script>
+<script>
+    async function submitReimbUpdate() {
+        let token = document.getElementById("EyeD").value;
+        localStorage.setItem("rId", token);
+        let reimbUpdate = {
+            amount: document.getElementById("amount").value,
+            description: document.getElementById("description").value,
+            reimbType: document.getElementById("type").value,
+        }
+        let response = await updateReimbursement(reimbUpdate);
+        if (response.status == 200) {
+            window.location.href = "./index.html"
+
+        } else {
+            alert("Unable to update reimbursement!");
+        }
+    }
+</script>
+
+</html>

@@ -63,10 +63,14 @@ public class UserServlet extends HttpServlet {
             if(req.getHeader("userIsTryingTo").equals("login")){
                 currentUser=authServ.login(currentUser.getUsername(), currentUser.getPassword());
                 resp.setStatus(200);
+                System.out.println(currentUser.getUsername());
                 String json = mapper.writeValueAsString(currentUser);
                 resp.getWriter().print(json);
-                resp.setHeader("access-control-expose-headers", "authToken");
+                resp.setHeader("access-control-expose-headers", "authToken, userIs");
                 resp.setHeader("authToken", currentUser.getUsername());
+
+                //resp.setHeader("access-control-expose-headers", "userIs");
+                resp.setHeader("userIs", currentUser.getRole().toString());
 
             //creating a new User and putting them in the DB
             }else if(req.getHeader("userIsTryingTo").equals("register")) {
@@ -76,6 +80,10 @@ public class UserServlet extends HttpServlet {
                 resp.getWriter().print(json);
                 resp.setHeader("access-control-expose-headers", "authToken");
                 resp.setHeader("authToken", currentUser.getUsername());
+
+                System.out.println(resp.getHeader("authToken"));
+                resp.setHeader("access-control-expose-headers", "userIs");
+                resp.setHeader("userIs", currentUser.getRole().toString());
             }
         //throw appropriate error codes if these exceptions are thrown
         }catch(UsernameNotUniqueException | RegistrationUnsuccessfulException | NewUserHasNonZeroIdException e){
@@ -98,6 +106,8 @@ public class UserServlet extends HttpServlet {
             resp.getWriter().print(json);
             resp.setHeader("access-control-expose-headers", "authToken");
             resp.setHeader("authToken", testUser.getUsername());
+            resp.setHeader("access-control-expose-headers", "userIs");
+            resp.setHeader("userIs", testUser.getRole().toString());
         }catch(NoSuchUserException e){
             resp.setStatus(404);
         }
