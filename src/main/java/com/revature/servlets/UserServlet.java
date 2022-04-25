@@ -25,7 +25,7 @@ public class UserServlet extends HttpServlet {
 //This is the READ operation
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getHeader("methodToBeCalled"));
+
         //If we're trying to read a user by their user id
         if(req.getHeader("methodToBeCalled").equals("id")) {
             try {
@@ -57,13 +57,11 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User currentUser = mapper.readValue(req.getInputStream(), User.class);
-        System.out.println(currentUser.getUsername());
         try {
             //logging in a User that's already in the DB
             if(req.getHeader("userIsTryingTo").equals("login")){
                 currentUser=authServ.login(currentUser.getUsername(), currentUser.getPassword());
                 resp.setStatus(200);
-                System.out.println(currentUser.getUsername());
                 String json = mapper.writeValueAsString(currentUser);
                 resp.getWriter().print(json);
                 resp.setHeader("access-control-expose-headers", "authToken, userIs");
@@ -78,11 +76,9 @@ public class UserServlet extends HttpServlet {
                 resp.setStatus(201); //status code 201: created says that we have successfully persisted this object
                 String json = mapper.writeValueAsString(currentUser);
                 resp.getWriter().print(json);
-                resp.setHeader("access-control-expose-headers", "authToken");
+                resp.setHeader("access-control-expose-headers", "authToken, userIs");
                 resp.setHeader("authToken", currentUser.getUsername());
 
-                System.out.println(resp.getHeader("authToken"));
-                resp.setHeader("access-control-expose-headers", "userIs");
                 resp.setHeader("userIs", currentUser.getRole().toString());
             }
         //throw appropriate error codes if these exceptions are thrown

@@ -30,7 +30,7 @@
             </div>
             <div class="flexRow">
                 <label>Password: </label>
-                <input type="text" id="password" placeholder="password" name="N1n31nchn41ls!">
+                <input type="password" id="password" placeholder="password" name="N1n31nchn41ls!">
             </div>
             <div class="flexRow">
                 <label>Email: </label>
@@ -58,43 +58,57 @@
             Build the object we will transfer in our API call. Grab the values from
             the input elements above.
             */
-            let newUser = {
-                username: document.getElementById("username").value,
-                password: document.getElementById("password").value,
-                firstName: document.getElementById("firstName").value,
-                lastName: document.getElementById("lastName").value,
-                email: document.getElementById("email").value,
-                role: "EMPLOYEE"
-            }
-            console.log(newUser);//fact finding
-
-            //Make our asynchronous API call
-            let response = await registerRequest(newUser);
-
-            console.log("Response: ", response);//fact finding
-            console.log("Response JSON: ", response.json());//we should delete these later
-
-            if (response.status == 201) {
-                /*
-                Here we are retyrieving the authToken header, which contains our username as
-                passed back from the server. This way we can use it to identify ourselves in 
-                subsequent API calls.
-                For this to work, you must send back a token in the header of the response
-                The key should match the shown key name "authToken" and the value should be
-                a string you can use to locally store information about the logged in user.
-                In this case we are getting a token that contains the username string, 
-                and storing it in localStorage.
-                */
-                let token = response.headers.get("authToken");
-                console.log("authToken received: ", token);//fact finding
-                localStorage.setItem("authToken", token);
-
-                //navigate the window to the landing page
-                window.location.href = "./index.html";
-
+            var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            var regex = /^[a-zA-Z ]{2,30}$/;
+            var firstName = document.getElementById("firstName").value;
+            var email = document.getElementById("email").value;
+            var lastName = document.getElementById("lastName").value;
+            if ((!regex.test(firstName) || !regex.test(lastName)) || !mailFormat.test(email)) {
+                alert("Invalid input! please enter a valid name and email!")
             } else {
-                alert("Unable to register!");
+
+                let newUser = {
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value,
+                    firstName: document.getElementById("firstName").value,
+                    lastName: document.getElementById("lastName").value,
+                    email: document.getElementById("email").value,
+                    role: "EMPLOYEE"
+                }
+                console.log(newUser);//fact finding
+
+                //Make our asynchronous API call
+                let response = await registerRequest(newUser);
+
+                console.log("Response: ", response);//fact finding
+                console.log("Response JSON: ", response.json());//we should delete these later
+
+                if (response.status == 201) {
+                    /*
+                    Here we are retyrieving the authToken header, which contains our username as
+                    passed back from the server. This way we can use it to identify ourselves in 
+                    subsequent API calls.
+                    For this to work, you must send back a token in the header of the response
+                    The key should match the shown key name "authToken" and the value should be
+                    a string you can use to locally store information about the logged in user.
+                    In this case we are getting a token that contains the username string, 
+                    and storing it in localStorage.
+                    */
+                    let token = response.headers.get("authToken");
+                    console.log("authToken received: ", token);//fact finding
+                    localStorage.setItem("authToken", token);
+
+                    let token2 = response.headers.get("userIs");
+                    localStorage.setItem("userIs", token2);
+
+                    //navigate the window to the landing page
+                    window.location.href = "./index.html";
+
+                } else {
+                    alert("Unable to register!");
+                }
             }
+
         }
     </script>
 

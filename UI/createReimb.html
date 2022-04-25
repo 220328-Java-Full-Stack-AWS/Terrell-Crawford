@@ -2,11 +2,13 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="./style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+<h1 id="MiddleText"> Enter Information for new Reimbursement Request</h1>
 
 <body>
     <div class="contentBox">
@@ -21,9 +23,11 @@
             </div>
             <div class="flexRow">
                 <label>Description: </label>
-                <input type="text" id="Description" placeholder="Describe and explain the request" name="Description">
-            </div>
+                <br>
+                <textarea name="Description" id="description" cols="50" rows="10"></textarea>
 
+            </div>
+            <br>
             <!-- onclick="submitForm()" hooks into our javascript, calling the funciton below -->
             <button id="contentBoxButton" onclick="submitCreation()">Register</button>
         </div>
@@ -34,9 +38,16 @@
 
     <script>
         async function submitCreation() {
+            var regex = /^(0|[1-9]\d*)(\.\d+)?$/;
+            var descr = /^[a-zA-Z ]{2,30}$/;
+            var desript = document.getElementById("reimbType").value;
+            var amounT = document.getElementById("amount").value;
+            if (!regex.test(amounT) || !descr.test(desript)) {
+                alert("Please enter a valid amount and Reimbursement type!");
+            }
             let newReimb = {
                 amount: document.getElementById("amount").value,
-                description: document.getElementById("Description").value,
+                description: document.getElementById("description").value,
                 reimbType: document.getElementById("reimbType").value,
                 status: "PENDING"
             }
