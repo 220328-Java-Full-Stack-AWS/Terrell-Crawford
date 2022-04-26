@@ -63,14 +63,14 @@
                 let token = document.getElementById("EyeD").value;
                 localStorage.setItem("rId", token);
                 let reimbUpdate = {
+                    id: document.getElementById("EyeD").value,
                     amount: document.getElementById("amount").value,
                     description: document.getElementById("description").value,
-                    //reimbType: document.getElementById("type").value,
                     reimbType: typeVal
                 }
                 let response = await updateReimbursement(reimbUpdate);
                 if (response.status == 200) {
-                    window.location.href = "./index.html"
+                    window.location.href = "./landingPage.html"
 
                 } else {
                     alert("Unable to update reimbursement!");

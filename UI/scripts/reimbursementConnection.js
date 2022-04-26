@@ -62,7 +62,6 @@ async function updateReimbursement(reimbursement) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "rId": localStorage.getItem("rId"),
                 "reimbIsBeing": "updated"
             },
             body: JSON.stringify(reimbursement)
@@ -79,9 +78,7 @@ async function processReimbursement(reimbursement) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "rId": localStorage.getItem("rId"),
                 "reimbIsBeing": "processed",
-                "decision": localStorage.getItem("decision"),
                 "authToken": localStorage.getItem("authToken")
 
             },
@@ -102,7 +99,6 @@ async function deleteReimbursement(reimbursement) {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "rId": localStorage.getItem("rId")
             },
             body: JSON.stringify(reimbursement)
         }

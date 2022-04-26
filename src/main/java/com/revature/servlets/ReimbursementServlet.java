@@ -139,35 +139,19 @@ public class ReimbursementServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Reimbursement tempReimb =  mapper.readValue(req.getInputStream(), Reimbursement.class);
-        Reimbursement reimb= rServ.getReimbursementByID(Integer.parseInt(req.getHeader("rId"))).get();
+        Reimbursement reimb= rServ.getReimbursementByID(tempReimb.getId()).get();
         try {
             if (req.getHeader("reimbIsBeing").equals("processed")) {
-                switch(req.getHeader("decision")){
-                    case "DENIED":
-                        //reimb=rServ.process(reimb, Status.DENIED, uServ.getByUsername(req.getHeader("authToken")).get());
-                        reimb.setStatus(Status.DENIED);
-                        reimb.setResolver(uServ.getByUsername(req.getHeader("authToken")).get());
-                        LocalDateTime now = LocalDateTime.now();
-                        Timestamp today = Timestamp.valueOf(now);
-                        reimb.setResolutionDate(today);
-                        reimb=rServ.update(reimb);
-                        String json = mapper.writeValueAsString(reimb);
-                        resp.setStatus(200);
-                        resp.getWriter().print(json);
-                        break;
-                    case "APPROVED":
-                        //reimb=rServ.process(reimb, Status.APPROVED, uServ.getByUsername(req.getHeader("authToken")).get());
-                        reimb.setStatus(Status.APPROVED);
-                        reimb.setResolver(uServ.getByUsername(req.getHeader("authToken")).get());
-                        LocalDateTime now1 = LocalDateTime.now();
-                        Timestamp today1 = Timestamp.valueOf(now1);
-                        reimb.setResolutionDate(today1);
-                        reimb=rServ.update(reimb);
-                        String json1 = mapper.writeValueAsString(reimb);
-                        resp.setStatus(200);
-                        resp.getWriter().print(json1);
-                        break;
-                    }
+                    reimb.setStatus(tempReimb.getStatus());
+                    reimb.setResolver(uServ.getByUsername(req.getHeader("authToken")).get());
+                    LocalDateTime now = LocalDateTime.now();
+                    Timestamp today = Timestamp.valueOf(now);
+                    reimb.setResolutionDate(today);
+                    reimb=rServ.update(reimb);
+                    String json = mapper.writeValueAsString(reimb);
+                    resp.setStatus(200);
+                    resp.getWriter().print(json);
+
             }else if(req.getHeader("reimbIsBeing").equals("updated")) {
                 reimb.setAmount(tempReimb.getAmount());
                 reimb.setDescription(tempReimb.getDescription());
@@ -184,9 +168,10 @@ public class ReimbursementServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Reimbursement reimb = mapper.readValue(req.getInputStream(), Reimbursement.class);
+        System.out.println("This is from ReimbServlet line 188. The Reimb ID you're trying to delete is: " +reimb.getId());
         try {
-            String temp = req.getHeader("rId");
-            rServ.delete(rServ.getReimbursementByID(Integer.parseInt(req.getHeader("rId"))).get());
+            rServ.delete(rServ.getReimbursementByID(reimb.getId()).get());
             resp.setStatus(200);
         }catch(UnableToDeleteException e){
             resp.setStatus(409);

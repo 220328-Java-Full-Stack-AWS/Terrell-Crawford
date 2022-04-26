@@ -47,3 +47,7 @@ Styling for buttons in flexboxes. Selects contentBoxButton class elements.
 #MiddleText {
     text-align: center;
 }
+
+#middleText {
+    text-align: center;
+}

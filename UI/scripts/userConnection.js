@@ -81,6 +81,7 @@ async function updateUserRequest(user) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                "authToken": localStorage.getItem("authToken")
             },
             body: JSON.stringify(user)
         }
@@ -109,7 +110,7 @@ async function getUser(un) {
     return response;
 }
 
-async function getUser(id) {
+async function getUserById(id) {
     let response = await fetch(
         userResourceURL,
         {

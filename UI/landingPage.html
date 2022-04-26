@@ -10,7 +10,11 @@
 <body>
     <h2>Welcome to The Employee Reimbursement System!</h2>
     <br>
-
+    <div>
+        <button onclick="goToEditUser()"> Edit Account Info</button>
+        <button onclick="window.location.href ='./userLookUp.html'"> User search</button>
+    </div>
+    <br>
     <button onclick="getItem('APPROVED')"> Approved</button>
     <button onclick="getItem('DENIED')"> Denied</button>
     <button onclick="getItem('PENDING')">Pending</button>
@@ -56,6 +60,10 @@
         }
     </script>
     <script>
+
+        function goToEditUser() {
+            window.location.href = "./editUser.html"
+        }
         function goUpdate() {
             window.location.href = "./editReimb.html"
         }
@@ -79,7 +87,9 @@
         async function submitForm() {
             let token = document.getElementById("reimbToDelete").value;
             localStorage.setItem("rId", token);
-            let reimbtoDelete = {}
+            let reimbtoDelete = {
+                id: token,
+            }
             let response = await deleteReimbursement(reimbtoDelete);
             if (response.status != 200) {
                 alert("Unable to delete reimbursement");

@@ -25,7 +25,6 @@ public class UserServlet extends HttpServlet {
 //This is the READ operation
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         //If we're trying to read a user by their user id
         if(req.getHeader("methodToBeCalled").equals("id")) {
             try {
@@ -94,15 +93,23 @@ public class UserServlet extends HttpServlet {
     //This is the UPDATE operation
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User testUser = mapper.readValue(req.getReader().toString(), User.class);
+
+        User temp = mapper.readValue(req.getInputStream(), User.class);
+        User testUser = uServ.getByUsername(req.getHeader("authToken")).get();
+        testUser.setUsername(temp.getUsername());
+        testUser.setEmail(temp.getEmail());
+        testUser.setFirstName(temp.getFirstName());
+        testUser.setLastName(temp.getLastName());
+        testUser.setPassword(temp.getPassword());
+        System.out.println(testUser.getUsername());
         try {
             testUser = uServ.updateUser(testUser);
-            resp.setStatus(201); //status code 201: created says that we have successfully persisted this object
+            resp.setStatus(200);
             String json = mapper.writeValueAsString(testUser);
             resp.getWriter().print(json);
-            resp.setHeader("access-control-expose-headers", "authToken");
+            resp.setHeader("access-control-expose-headers", "authToken, userIs");
             resp.setHeader("authToken", testUser.getUsername());
-            resp.setHeader("access-control-expose-headers", "userIs");
+            //resp.setHeader("access-control-expose-headers", "userIs");
             resp.setHeader("userIs", testUser.getRole().toString());
         }catch(NoSuchUserException e){
             resp.setStatus(404);

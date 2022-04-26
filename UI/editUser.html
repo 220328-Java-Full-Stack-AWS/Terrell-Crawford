@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit your account information</title>
+</head>
+
+<body>
+    <h1 id="MiddleText">Edit Account Information</h1>
+    <h3 id="middleText">Enter the information you want to change. If you don't wish to change a value, simply enter what
+        it is currently
+    </h3>
+    <div class="contentBox" id="EmployeeUpdate">
+        <div class="flexColumn">
+            <div class="flexRow">
+                <label>Username: </label>
+                <input type="text" id="username" placeholder="username" name="UserName">
+            </div>
+
+            <div class="flexRow">
+                <label>First name: </label>
+                <input type="text" id="firstName" placeholder="firstName" name="John">
+            </div>
+
+            <div class="flexRow">
+                <label>Last name: </label>
+                <input type="text" id="lastName" placeholder="lastName" name="Smith">
+            </div>
+            <div class="flexRow">
+                <label>Email: </label>
+                <input type="text" id="email" placeholder="email" name="john.smith@email.com">
+            </div>
+            <div class="flexRow">
+                <label>Password: </label>
+                <input type="password" id="password" placeholder="password" name="N1n31nchn41ls!">
+            </div>
+            <button id="contentBoxButton" onclick="submitForm()">Update Account Info</button>
+        </div>
+    </div>
+    <script src="./scripts/userConnection.js"></script>
+    <script>
+        async function submitForm() {
+
+            var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            var regex = /^[a-zA-Z ]{2,30}$/;
+            var firstName = document.getElementById("firstName").value;
+            var email = document.getElementById("email").value;
+            var lastName = document.getElementById("lastName").value;
+            if ((!regex.test(firstName) || !regex.test(lastName)) || !mailFormat.test(email)) {
+                alert("Invalid input! please enter a valid name and email! And if you did change your name to have #'s in it, WHY?!!")
+            } else {
+
+                let user = {
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value,
+                    firstName: document.getElementById("firstName").value,
+                    lastName: document.getElementById("lastName").value,
+                    email: document.getElementById("email").value,
+                    role: "EMPLOYEE"
+                }
+                console.log(user);//fact finding
+
+                //Make our asynchronous API call
+                let response = await updateUserRequest(user);
+
+                console.log("Response: ", response);//fact finding
+                console.log("Response JSON: ", response.json());//we should delete these later
+                if (response.status == 200) {
+                    window.location.href = "./landingPage.html";
+                } else {
+                    alert("Unable to update account info");
+                }
+
+            }
+        }
+    </script>
+</body>
+
+</html>

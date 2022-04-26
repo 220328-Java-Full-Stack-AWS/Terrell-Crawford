@@ -27,30 +27,26 @@
 <script>
     async function submitApproval() {
         let token = document.getElementById("EyeD").value;
-        localStorage.setItem("rId", token);
-        localStorage.setItem("decision", "APPROVED");
         let reimbUpdate = {
+            id: document.getElementById("EyeD").value,
             status: "APPROVED"
         }
         let response = await processReimbursement(reimbUpdate);
         if (response.status == 200) {
-            window.location.href = "./index.html"
+            window.location.href = "./landingPage.html";
 
         } else {
             alert("Unable to process reimbursement!");
         }
     }
     async function submitDenial() {
-        let token = document.getElementById("EyeD").value;
-        localStorage.setItem("rId", token);
-        localStorage.setItem("decision", "DENIED");
         let reimbUpdate = {
             id: document.getElementById("EyeD").value,
             status: "DENIED"
         }
         let response = await processReimbursement(reimbUpdate);
         if (response.status == 200) {
-            window.location.href = "./index.html"
+            window.location.href = "./landingPage.html";
 
         } else {
             alert("Unable to process reimbursement!");
