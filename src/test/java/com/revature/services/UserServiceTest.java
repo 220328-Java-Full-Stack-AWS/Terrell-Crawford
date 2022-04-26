@@ -34,7 +34,11 @@ public class UserServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        GENERIC_EMPLOYEE_1 = new User(1, "genericEmployee1", "genericPassword", Role.EMPLOYEE);
+        GENERIC_EMPLOYEE_1 = new User();
+        GENERIC_EMPLOYEE_1.setUsername("genericEmployee1");
+        GENERIC_EMPLOYEE_1.setPassword("genericPassword");
+        GENERIC_EMPLOYEE_1.setRole(Role.EMPLOYEE);
+
     }
 
     @Test

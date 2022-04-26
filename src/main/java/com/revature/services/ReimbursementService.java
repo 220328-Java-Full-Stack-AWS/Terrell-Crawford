@@ -1,16 +1,8 @@
 package com.revature.services;
 
-import com.revature.exceptions.UnableToProcessException;
 import com.revature.models.Reimbursement;
-import com.revature.models.Role;
 import com.revature.models.Status;
-import com.revature.models.User;
 import com.revature.repositories.ReimbursementDAO;
-import jdk.nashorn.internal.runtime.options.Option;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,32 +24,9 @@ import java.util.Optional;
  * </ul>
  */
 public class ReimbursementService {
-     ReimbursementDAO reimbDAO=new ReimbursementDAO();
-    /**
-     * <ul>
-     *     <li>Should ensure that the user is logged in as a Finance Manager</li>
-     *     <li>Must throw exception if user is not logged in as a Finance Manager</li>
-     *     <li>Should ensure that the reimbursement request exists</li>
-     *     <li>Must throw exception if the reimbursement request is not found</li>
-     *     <li>Should persist the updated reimbursement status with resolver information</li>
-     *     <li>Must throw exception if persistence is unsuccessful</li>
-     * </ul>
-     *
-     * Note: unprocessedReimbursement will have a status of PENDING, a non-zero ID and amount, and a non-null Author.
-     * The Resolver should be null. Additional fields may be null.
-     * After processing, the reimbursement will have its status changed to either APPROVED or DENIED.
-     */
-    public Reimbursement process(Reimbursement unprocessedReimbursement, Status finalStatus, User resolver) {
-        if(resolver.getRole()== Role.FINANCE_MANAGER && unprocessedReimbursement.getStatus()==Status.PENDING) {
-            unprocessedReimbursement.setStatus(finalStatus);
-            unprocessedReimbursement.setResolver(resolver);
-            LocalDateTime now = LocalDateTime.now();
-            Timestamp today = Timestamp.valueOf(now);
-            unprocessedReimbursement.setResolutionDate(today);
-            unprocessedReimbursement = reimbDAO.update(unprocessedReimbursement);
-            return unprocessedReimbursement;
-        }else throw new UnableToProcessException("Only Finance Managers can process reimbursement request. And only PENDING requests may be processed");
-    }
+     private final ReimbursementDAO reimbDAO;
+
+     public ReimbursementService(){this.reimbDAO=new ReimbursementDAO();}
 
     public Reimbursement create(Reimbursement reimbToBeCreated){
         Reimbursement returnVal=reimbDAO.create(reimbToBeCreated);

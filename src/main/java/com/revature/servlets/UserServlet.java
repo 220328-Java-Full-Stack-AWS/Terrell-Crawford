@@ -118,7 +118,11 @@ public class UserServlet extends HttpServlet {
     //This is the DELETE operation (Duh)
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        uServ.deleteUser(uServ.getByUsername(req.getHeader("username")).get());
-        resp.setStatus(200);
+        try {
+            uServ.deleteUser(uServ.getByUsername(req.getHeader("username")).get());
+            resp.setStatus(200);
+        }catch (UnableToDeleteException e){
+            resp.setStatus(409);
+        }
     }
 }

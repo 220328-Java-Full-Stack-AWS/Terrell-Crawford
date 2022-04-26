@@ -15,9 +15,12 @@
         <button onclick="window.location.href ='./userLookUp.html'"> User search</button>
     </div>
     <br>
-    <button onclick="getItem('APPROVED')"> Approved</button>
+    <div id="buttonSpace">
+
+    </div>
+    <!-- <button onclick="getItem('APPROVED')"> Approved</button>
     <button onclick="getItem('DENIED')"> Denied</button>
-    <button onclick="getItem('PENDING')">Pending</button>
+    <button onclick="getItem('PENDING')">Pending</button>-->
     <div id="table_space">
 
     </div>
@@ -56,7 +59,17 @@
             diffButton += "<button onclick=\"goToCreate()\">";
             diffButton += "Create New Request</button>";
             document.getElementById("create_button").innerHTML = diffButton;
+            let userButtons = "";
+            userButtons += "<button onclick=\"getItem('PENDING')\">Pending</button>";
+            userButtons += "<button onclick=\"getItem('COMPLETED')\">Completed</button>";
+            document.getElementById("buttonSpace").innerHTML = userButtons;
 
+        } else if (authorizedUser == "Finance Manager") {
+            let adButtons = "";
+            adButtons += "<button onclick=\"getItem('APPROVED')\"> Approved</button>";
+            adButtons += "<button onclick=\"getItem('DENIED')\"> Denied</button>";
+            adButtons += "<button onclick=\"getItem('PENDING')\">Pending</button>";
+            document.getElementById("buttonSpace").innerHTML = adButtons;
         }
     </script>
     <script>
@@ -98,34 +111,113 @@
         }
     </script>
     <script>
-        //window.onload = getItem("DENIED");
         async function getItem(id) {
-            let response = await getReimbursement(id);
-            let json = await response.json();
-            let table = "";
-            table += "<table cellpadding=\"10\" cellspacing=\"50\">";
-            table += "<thead>";
-            table += "<tr>";
-            table += "<th> Reimbursement ID </th>"
-            table += " <th>Amount</th>";
-            table += "<th>Type</th>";
-            table += " <th>Author</th>";
-            table += " <th>Creation Date</th>";
-            table += "<th>Resolver</th>";
-            table += "<th>Resolution Date</th>";
-            table += "<th> Description</th>";
-            table += "<th>Status</th></tr></thead>";
-            table += "<tbody id=\"table_data\">";
-            table += "</tbody>";
-            table += "</table>";
-            document.getElementById("table_space").innerHTML = table;
-            for (let i = 0; i < json.length; i++) {
-                //console.log(response);
-                console.log(json);
-                if (id != "PENDING") {
+            if (id != "COMPLETED") {
+                let response = await getReimbursement(id);
+                let json = await response.json();
+                let table = "";
+                table += "<table cellpadding=\"10\" cellspacing=\"50\">";
+                table += "<thead>";
+                table += "<tr>";
+                table += "<th> Reimbursement ID </th>"
+                table += " <th>Amount</th>";
+                table += "<th>Type</th>";
+                table += " <th>Author</th>";
+                table += " <th>Creation Date</th>";
+                table += "<th>Resolver</th>";
+                table += "<th>Resolution Date</th>";
+                table += "<th> Description</th>";
+                table += "<th>Status</th></tr></thead>";
+                table += "<tbody id=\"table_data\">";
+                table += "</tbody>";
+                table += "</table>";
+                document.getElementById("table_space").innerHTML = table;
+
+                for (let i = 0; i < json.length; i++) {
+                    //console.log(response);
+                    console.log(json);
+                    if (id != "PENDING") {
+                        var Cdate = new Date(json[i].creationDate);
+                        var Rdate = new Date(json[i].resolutionDate);
+                        let temp = "";
+                        temp += "<tr>";
+                        temp += "<td>" + json[i].id + "</td>";
+                        temp += "<td>" + json[i].amount + "</td>";
+                        temp += "<td>" + json[i].reimbType + "</td>";
+                        temp += "<td>" + json[i].author.username + "</td>";
+                        temp += "<td>" + Cdate + "</td>";
+                        temp += "<td>" + json[i].resolver.username + "</td>";
+                        temp += "<td>" + Rdate + "</td>";
+                        temp += "<td>" + json[i].description + "</td>";
+                        temp += "<td>" + json[i].status + "</td></tr>";
+
+
+                        document.getElementById("table_data").innerHTML += temp;
+                    } else if (id == "PENDING") {
+                        var Cdate = new Date(json[i].creationDate);
+                        var Rdate = new Date(json[i].resolutionDate);
+                        let temp = "";
+                        temp += "<tr>";
+                        temp += "<td>" + json[i].id + "</td>";
+                        temp += "<td>" + json[i].amount + "</td>";
+                        temp += "<td>" + json[i].reimbType + "</td>";
+                        temp += "<td>" + json[i].author.username + "</td>";
+                        temp += "<td>" + Cdate + "</td>";
+                        temp += "<td>" + "Unresolved" + "</td>";
+                        temp += "<td>" + "N/A" + "</td>";
+                        temp += "<td>" + json[i].description + "</td>";
+                        temp += "<td>" + json[i].status + "</td></tr>";
+
+
+                        document.getElementById("table_data").innerHTML += temp;
+                    }
+                }
+                let userCheck = localStorage.getItem("userIs");
+                console.log(id);
+                if (id == "PENDING" && userCheck == "Employee") {
+                    let editButton = "";
+                    editButton += "<button onclick=\"goUpdate()\">";
+                    editButton += "Update Request</button>";
+                    document.getElementById("create_button2").innerHTML = editButton;
+                    let deleteButton = "";
+                    deleteButton += "<button onclick=\"goDelete()\">";
+                    deleteButton += "Delete Pending Request</button>";
+                    document.getElementById("create_button3").innerHTML = deleteButton;
+                } else if (id == "PENDING" && userCheck == "Finance Manager") {
+                    let editButton = "";
+                    editButton += "<button onclick=\"goProcess()\">";
+                    editButton += "Process Request</button>";
+                    document.getElementById("create_button2").innerHTML = editButton;
+                } else {
+                    let editButton = "";
+                    document.getElementById("create_button2").innerHTML = editButton;
+                }
+
+            } else if (id == "COMPLETED") {
+                let table = "";
+                table += "<table cellpadding=\"10\" cellspacing=\"50\">";
+                table += "<thead>";
+                table += "<tr>";
+                table += "<th> Reimbursement ID </th>"
+                table += " <th>Amount</th>";
+                table += "<th>Type</th>";
+                table += " <th>Author</th>";
+                table += " <th>Creation Date</th>";
+                table += "<th>Resolver</th>";
+                table += "<th>Resolution Date</th>";
+                table += "<th> Description</th>";
+                table += "<th>Status</th></tr></thead>";
+                table += "<tbody id=\"table_data\">";
+                table += "</tbody>";
+                table += "</table>";
+                document.getElementById("table_space").innerHTML = table;
+                let response = await getReimbursement("APPROVED");
+                let json = await response.json();
+                let temp = "";
+                for (let i = 0; i < json.length; i++) {
                     var Cdate = new Date(json[i].creationDate);
                     var Rdate = new Date(json[i].resolutionDate);
-                    let temp = "";
+
                     temp += "<tr>";
                     temp += "<td>" + json[i].id + "</td>";
                     temp += "<td>" + json[i].amount + "</td>";
@@ -136,49 +228,27 @@
                     temp += "<td>" + Rdate + "</td>";
                     temp += "<td>" + json[i].description + "</td>";
                     temp += "<td>" + json[i].status + "</td></tr>";
-
-
-                    document.getElementById("table_data").innerHTML += temp;
-                } else if (id == "PENDING") {
+                    //document.getElementById("table_data").innerHTML += temp;
+                }
+                response = await getReimbursement("DENIED");
+                json = await response.json();
+                for (let i = 0; i < json.length; i++) {
                     var Cdate = new Date(json[i].creationDate);
                     var Rdate = new Date(json[i].resolutionDate);
-                    let temp = "";
+                    //let temp = "";
                     temp += "<tr>";
                     temp += "<td>" + json[i].id + "</td>";
                     temp += "<td>" + json[i].amount + "</td>";
                     temp += "<td>" + json[i].reimbType + "</td>";
                     temp += "<td>" + json[i].author.username + "</td>";
                     temp += "<td>" + Cdate + "</td>";
-                    temp += "<td>" + "Unresolved" + "</td>";
-                    temp += "<td>" + "N/A" + "</td>";
+                    temp += "<td>" + json[i].resolver.username + "</td>";
+                    temp += "<td>" + Rdate + "</td>";
                     temp += "<td>" + json[i].description + "</td>";
                     temp += "<td>" + json[i].status + "</td></tr>";
-
-
                     document.getElementById("table_data").innerHTML += temp;
                 }
             }
-            let userCheck = localStorage.getItem("userIs");
-            console.log(id);
-            if (id == "PENDING" && userCheck == "Employee") {
-                let editButton = "";
-                editButton += "<button onclick=\"goUpdate()\">";
-                editButton += "Update Request</button>";
-                document.getElementById("create_button2").innerHTML = editButton;
-                let deleteButton = "";
-                deleteButton += "<button onclick=\"goDelete()\">";
-                deleteButton += "Delete Pending Request</button>";
-                document.getElementById("create_button3").innerHTML = deleteButton;
-            } else if (id == "PENDING" && userCheck == "Finance Manager") {
-                let editButton = "";
-                editButton += "<button onclick=\"goProcess()\">";
-                editButton += "Process Request</button>";
-                document.getElementById("create_button2").innerHTML = editButton;
-            } else {
-                let editButton = "";
-                document.getElementById("create_button2").innerHTML = editButton;
-            }
-
         }
     </script>
 
