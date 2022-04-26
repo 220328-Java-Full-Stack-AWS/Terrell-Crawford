@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--web.xml is your depoyment descriptor
+        this is how tomcat gathers information about your project, such as welcome files,
+            available servlets, how to handle errors and exceptions, and other various
+            configurations you may want tomcat to know about.
+    It belongs in src/main/webapp/WEB-INF/ directory
+-->
+<web-app
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+        version="2.5">
+
+        <listener>
+            <listener-class>com.revature.servlets.DependencyLoaderListener</listener-class>
+        </listener>
+        <!-- This is the User servlet-->
+        <servlet-mapping>
+            <servlet-name>UserServlet</servlet-name>
+            <url-pattern>/UserServ</url-pattern>
+         </servlet-mapping>
+        <servlet>
+            <servlet-name>UserServlet</servlet-name>
+            <servlet-class>com.revature.servlets.UserServlet</servlet-class>
+        </servlet>
+
+        <!-- This is the Reimbursement servlet-->
+        <servlet-mapping>
+            <servlet-name>ReimbursementServlet</servlet-name>
+            <url-pattern>/ReimbursementServ</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>ReimbursementServlet</servlet-name>
+            <servlet-class>com.revature.servlets.ReimbursementServlet</servlet-class>
+        </servlet>
+
+        <!-- CORS FILTER -->
+        <filter>
+            <filter-name>CorsFilter</filter-name>
+            <filter-class>com.revature.servlets.CorsFilter</filter-class>
+        </filter>
+
+        <filter-mapping>
+            <filter-name>CorsFilter</filter-name>
+            <url-pattern>/*</url-pattern>
+        </filter-mapping>
+
+</web-app>

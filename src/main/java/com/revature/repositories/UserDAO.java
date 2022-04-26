@@ -213,4 +213,46 @@ public class UserDAO {
 
         return userToBeRegistered;
     }
+
+    public void delete(User userToBeDeleted){
+        String deleteRole="DELETE FROM ers_user_roles WHERE ers_user_role_id=?";
+        String deleteUser="DELETE FROM ers_users WHERE ers_users_id=?";
+        try {
+            PreparedStatement deleter= con.prepareStatement(deleteUser);
+            deleter.setInt(1, userToBeDeleted.getId());
+            deleter.executeUpdate();
+
+            deleter= con.prepareStatement(deleteRole);
+            deleter.setInt(1, userToBeDeleted.getRoleID());
+            deleter.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public User update(User userToUpdate){
+        String updateRole="UPDATE ers_user_roles SET user_role=? WHERE ers_user_role_id=?";
+        String updateUser="UPDATE ers_users SET ers_username=?, ers_password=?, user_first_name=?, user_last_name=?, user_email=? WHERE ers_users_id=?";
+        try {
+            PreparedStatement updater= con.prepareStatement(updateRole);
+            updater.setString(1, userToUpdate.getRole().toString());
+            updater.setInt(2, userToUpdate.getRoleID());
+            updater.executeUpdate();
+
+            updater= con.prepareStatement(updateUser);
+            updater.setString(1, userToUpdate.getUsername());
+            updater.setString(2, userToUpdate.getPassword());
+            updater.setString(3, userToUpdate.getFirstName());
+            updater.setString(4, userToUpdate.getLastName());
+            updater.setString(5, userToUpdate.getEmail());
+            updater.setInt(6, userToUpdate.getId());
+            updater.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Error updating user. User may not exist");
+            e.printStackTrace();
+            throw new NoSuchUserException();
+        }
+        return userToUpdate;
+    }
 }

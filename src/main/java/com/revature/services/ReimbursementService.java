@@ -2,10 +2,9 @@ package com.revature.services;
 
 import com.revature.models.Reimbursement;
 import com.revature.models.Status;
-import com.revature.models.User;
-
-import java.util.Collections;
+import com.revature.repositories.ReimbursementDAO;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The ReimbursementService should handle the submission, processing,
@@ -25,29 +24,44 @@ import java.util.List;
  * </ul>
  */
 public class ReimbursementService {
+     private final ReimbursementDAO reimbDAO;
 
-    /**
-     * <ul>
-     *     <li>Should ensure that the user is logged in as a Finance Manager</li>
-     *     <li>Must throw exception if user is not logged in as a Finance Manager</li>
-     *     <li>Should ensure that the reimbursement request exists</li>
-     *     <li>Must throw exception if the reimbursement request is not found</li>
-     *     <li>Should persist the updated reimbursement status with resolver information</li>
-     *     <li>Must throw exception if persistence is unsuccessful</li>
-     * </ul>
-     *
-     * Note: unprocessedReimbursement will have a status of PENDING, a non-zero ID and amount, and a non-null Author.
-     * The Resolver should be null. Additional fields may be null.
-     * After processing, the reimbursement will have its status changed to either APPROVED or DENIED.
-     */
-    public Reimbursement process(Reimbursement unprocessedReimbursement, Status finalStatus, User resolver) {
-        return null;
+     public ReimbursementService(){this.reimbDAO=new ReimbursementDAO();}
+
+    public Reimbursement create(Reimbursement reimbToBeCreated){
+        Reimbursement returnVal=reimbDAO.create(reimbToBeCreated);
+        return returnVal;
     }
 
     /**
      * Should retrieve all reimbursements with the correct status.
      */
     public List<Reimbursement> getReimbursementsByStatus(Status status) {
-        return Collections.emptyList();
+        List<Reimbursement>result=reimbDAO.getByStatus(status);
+        return result;
+    }
+
+    public Optional<Reimbursement> getReimbursementByID(int ID){
+        Optional<Reimbursement>returnVal=reimbDAO.getById(ID);
+        if(returnVal.equals(Optional.empty())){
+            return Optional.empty();
+        }
+        return returnVal;
+    }
+
+    /**
+     * Deletes the given reimbursement from the DB
+     */
+    public void delete(Reimbursement reimbToDelete){
+        reimbDAO.delete(reimbToDelete);
+    }
+
+    /**
+     * Updates the given reimbursement in the DB
+     */
+    public Reimbursement update(Reimbursement reimbToUpdate){
+        Reimbursement returnVal=reimbDAO.update(reimbToUpdate);
+        return returnVal;
     }
 }
+

@@ -20,7 +20,6 @@ import java.util.Optional;
  */
 public class AuthService {
     UserService userService= new UserService();
-    UserDAO uDAO= new UserDAO();
     /**
      * <ul>
      *     <li>Needs to check for existing users with username/email provided.</li>
@@ -78,7 +77,7 @@ public class AuthService {
             throw new NewUserHasNonZeroIdException();
         //If new user with ID = 0, then register the user and return that user
         }else{
-            temp=uDAO.create(userToBeRegistered);
+            temp=userService.create(userToBeRegistered);
             return temp;
         }
         return temp;

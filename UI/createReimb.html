@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<h1 id="MiddleText"> Enter Information for new Reimbursement Request</h1>
+
+<body>
+    <div class="contentBox">
+        <div class="flexColumn">
+            <div class="flexRow">
+                <label>Amount (leave out the $): </label>
+                <input type="text" id="amount" placeholder="420.69" name="Amount">
+            </div>
+            <div class="flexRow">
+                <label>Type of Reimbursement: </label>
+                <input type="radio" id="typeLodge" name="Lodging" class="typeRadio" value="LODGING">Lodging
+                <input type="radio" id="typeFood" name="Food" class="typeRadio" value="FOOD">Food
+                <input type="radio" id="typeTrav" name="Travel" class="typeRadio" value="TRAVEL">Travel
+            </div>
+            <div class="flexRow">
+                <label>Description: </label>
+                <br>
+                <textarea name="Description" id="description" cols="50" rows="10"></textarea>
+
+            </div>
+            <br>
+            <!-- onclick="submitForm()" hooks into our javascript, calling the funciton below -->
+            <button id="contentBoxButton" onclick="submitCreation()">Register</button>
+        </div>
+
+
+    </div>
+    <script src="./scripts/reimbursementConnection.js"></script>
+
+    <script>
+        async function submitCreation() {
+            let typeVal = 0;
+            for (let ele of document.getElementsByClassName("typeRadio")) {
+                if (ele.checked == true) {
+                    typeVal = ele.value;
+                }
+            }
+            if (typeVal == 0) {
+                alert("You must select a Type of Reimbursement!!!");
+            } else {
+                var regex = /^(0|[1-9]\d*)(\.\d+)?$/;
+                var descr = /^[a-zA-Z ]{2,30}$/;
+                // var desript = document.getElementById("reimbType").value;
+                var amounT = document.getElementById("amount").value;
+                if (!regex.test(amounT)) {
+                    alert("Please enter a valid amount and Reimbursement type!");
+                }
+                let newReimb = {
+                    amount: document.getElementById("amount").value,
+                    description: document.getElementById("description").value,
+                    reimbType: typeVal,
+                    status: "PENDING"
+                }
+                let response = await newReimbursement(newReimb);
+                if (response.status == 201) {
+                    window.location.href = "./landingPage.html"
+
+                } else {
+                    alert("Unable to create reimbursement!");
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

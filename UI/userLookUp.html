@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <label> Search for User with username: </label>
+        <input type="text" id="username" placeholder="username" name="jsmith123"> <button
+            onclick="searchUser(document.getElementById('username').value)"> Search Username</button>
+    </div>
+    <br>
+    <div>
+        <label> Search for user with ID = </label>
+        <input type="text" id="EyeD" placeholder="1" name="1"><button
+            onclick="searchID(document.getElementById('EyeD').value)">Search ID</button>
+    </div>
+    <div id="table_space">
+
+
+    </div>
+    <script src="./scripts/userConnection.js"></script>
+    <script>
+        async function searchID(id) {
+            console.log(id);
+            let table = "";
+            table += "<table cellpadding=\"10\" cellspacing=\"50\">";
+            table += "<thead>";
+            table += "<tr>";
+            table += "<th> Username </th>"
+            table += " <th>First Name </th>";
+            table += "<th>Last Name </th>";
+            table += " <th>Email </th>";
+            table += " <th>Company Role</th></tr></thead>";
+            table += "<tbody id=\"table_data\">";
+            table += "</tbody>";
+            table += "</table>";
+            document.getElementById("table_space").innerHTML = table;
+            let response = await getUserById(id);
+            let json = await response.json();
+
+            let temp = "";
+            temp += "<tr>";
+            temp += "<td>" + json.username + "</td>";
+            temp += "<td>" + json.firstName + "</td>";
+            temp += "<td>" + json.lastName + "</td>";
+            temp += "<td>" + json.email + "</td>";
+            if (json.role == "FINANCE_MANAGER") {
+                temp += "<td>" + "FINANCE MANAGER" + "</td></tr>";
+            } else {
+                temp += "<td>" + json.role + "</td></tr>";
+            }
+            document.getElementById("table_data").innerHTML += temp;
+        }
+        async function searchUser(un) {
+            console.log(un);
+            let table = "";
+            table += "<table cellpadding=\"10\" cellspacing=\"50\">";
+            table += "<thead>";
+            table += "<tr>";
+            table += "<th> Username </th>"
+            table += " <th>First Name </th>";
+            table += "<th>Last Name </th>";
+            table += " <th>Email </th>";
+            table += " <th>Company Role</th></tr></thead>";
+            table += "<tbody id=\"table_data\">";
+            table += "</tbody>";
+            table += "</table>";
+            document.getElementById("table_space").innerHTML = table;
+            let response = await getUser(un);
+            let json = await response.json();
+            let temp = "";
+            temp += "<tr>";
+            temp += "<td>" + json.username + "</td>";
+            temp += "<td>" + json.firstName + "</td>";
+            temp += "<td>" + json.lastName + "</td>";
+            temp += "<td>" + json.email + "</td>";
+            if (json.role == "FINANCE_MANAGER") {
+                temp += "<td>" + "FINANCE MANAGER" + "</td></tr>";
+            } else {
+                temp += "<td>" + json.role + "</td></tr>";
+            }
+            document.getElementById("table_data").innerHTML += temp;
+        }
+    </script>
+</body>
+
+</html>
