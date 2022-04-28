@@ -48,6 +48,16 @@ Styling for buttons in flexboxes. Selects contentBoxButton class elements.
     text-align: center;
 }
 
-#middleText {
-    text-align: center;
+
+
+#logoutButton {
+    position: absolute;
+    top: 15px;
+    right: 50px;
+}
+
+#backButton {
+    position: absolute;
+    top: 15px;
+    right: 150px;
 }
