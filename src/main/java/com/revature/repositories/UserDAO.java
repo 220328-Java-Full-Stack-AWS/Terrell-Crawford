@@ -96,7 +96,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("This is from UDAO getByID. The user Id in temp is currently:" + temp.getId());
+
         //SQL query to retrieve user roles with matching role id
         String query2 = "SELECT * FROM ers_user_roles WHERE ers_user_role_id=?";
         //initialize prepared statement set ? to the RoleID value stored in temp User, then execute the query and store it in a result set
@@ -152,7 +152,7 @@ public class UserDAO {
             //Set values in SQL statement to Role ID and Role of User that was passed in
             PreparedStatement preparedStatement=con.prepareStatement(query2);
             //preparedStatement.setInt(1, userToBeRegistered.getRoleID());
-            System.out.println(userToBeRegistered.getRole().toString());
+
             preparedStatement.setString(1, userToBeRegistered.getRole().toString());
             preparedStatement.executeUpdate();
 
@@ -175,8 +175,7 @@ public class UserDAO {
             st.setString(5, userToBeRegistered.getEmail());
             //st.setInt(7,userToBeRegistered.getRoleID());
             rowChecker=st.executeUpdate();
-            System.out.println("This print is from UserDAO. This is to show how many rows you got back."+rowChecker);
-            System.out.println("This print is from UserDAO line 178.Displays output for Username"+userToBeRegistered.getUsername());
+
         }catch (SQLException e) {
             System.out.println("Couldn't add user \n"+ e.getMessage() +"\n"+ e.getErrorCode());
            /* if(rowChecker==0&& e.getErrorCode()==0){

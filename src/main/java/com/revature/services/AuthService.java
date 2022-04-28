@@ -38,7 +38,7 @@ public class AuthService {
         //checks for users with the same username as given in parameters then stores any found into temp user object
         Optional<User> tempOp =userService.getByUsername(username);
         User temp = tempOp.get();
-        System.out.println(temp.getUsername());
+
         //checks if result of username check returned anything and throws exception if it didn't
         if(temp.getUsername()==null){
            throw new NoSuchUserException("User doesn't exist");
