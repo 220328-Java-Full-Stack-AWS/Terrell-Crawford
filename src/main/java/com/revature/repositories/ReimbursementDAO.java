@@ -145,7 +145,7 @@ public class ReimbursementDAO {
                     temp.setReimbType(resultSet2.getString(1));
 
                 }
-                System.out.println("This is from reimbDAO 144. temp is: " +temp);
+
                 tempList.add(counter, temp);
             }
             if(tempList.size()!=0) {

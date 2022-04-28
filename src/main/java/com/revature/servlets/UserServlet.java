@@ -101,7 +101,7 @@ public class UserServlet extends HttpServlet {
         testUser.setFirstName(temp.getFirstName());
         testUser.setLastName(temp.getLastName());
         testUser.setPassword(temp.getPassword());
-        System.out.println(testUser.getUsername());
+
         try {
             testUser = uServ.updateUser(testUser);
             resp.setStatus(200);
