@@ -108,7 +108,6 @@ public class ReimbursementDAO {
                 Reimbursement temp = new Reimbursement();
                 //store their status and status id in the Reimbursement
                 int counter = resultSet.getRow()-1;
-                System.out.println(resultSet.getRow());
                 temp.setStatusID(resultSet.getInt(1));
                 String status2= resultSet.getString(2);
                 switch (status2){

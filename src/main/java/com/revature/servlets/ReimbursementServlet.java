@@ -31,22 +31,18 @@ public class ReimbursementServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        System.out.println(req.getHeader("rMethodToBeCalled"));
+
         try {
             if (req.getHeader("rMethodToBeCalled").equals("id")) {
                 Reimbursement reimb = rServ.getReimbursementByID(Integer.parseInt(req.getHeader("Id"))).get();
-                System.out.println(reimb);
                 String json = mapper.writeValueAsString(reimb);
                 resp.setContentType("application/json");
                 resp.getWriter().print(json);
                 resp.setStatus(200);
             } else if (req.getHeader("rMethodToBeCalled").equals("status")) {
-                System.out.println(req.getHeader("authToken"));
                 String AuthToken= "";
                 AuthToken = req.getHeader("authToken");
                 if (uServ.getByUsername(req.getHeader("authToken")).get().getRole() == Role.EMPLOYEE) {
-                    System.out.println("We Got here");
-                    System.out.println(req.getHeader("Status"));
                     switch(req.getHeader("Status")) {
                         case "PENDING":
                             List<Reimbursement> reimbList = rServ.getReimbursementsByStatus(Status.PENDING);
@@ -69,7 +65,7 @@ public class ReimbursementServlet extends HttpServlet {
                                     tempListA.add(r);
                                 }
                             }
-                            System.out.println(tempListA);
+
                             JSONArray jsonArrayA= new JSONArray(tempListA);
                             resp.getWriter().print(jsonArrayA);
                             resp.setStatus(200);
@@ -169,7 +165,7 @@ public class ReimbursementServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Reimbursement reimb = mapper.readValue(req.getInputStream(), Reimbursement.class);
-        System.out.println("This is from ReimbServlet line 188. The Reimb ID you're trying to delete is: " +reimb.getId());
+
         try {
             rServ.delete(rServ.getReimbursementByID(reimb.getId()).get());
             resp.setStatus(200);

@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <h1 id="MiddleText">Please enter information below to register new account</h1>
     <!-- This is our input form. We're not using the HTML form tags here, just some bare elements
     and some javascript to find them and see their data. The classes are for styling. We are
     putting a visible box "contentBox" around a flexbox arranged as a column. The flexbox contains
@@ -104,8 +105,10 @@
                     //navigate the window to the landing page
                     window.location.href = "./landingPage.html";
 
+                } else if (response.status == 409) {
+                    alert("Unable to register! The username you selected might already be taken.");
                 } else {
-                    alert("Unable to register!");
+                    alert("There was an error we were unable to register the account");
                 }
             }
 

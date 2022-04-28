@@ -193,6 +193,7 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RegistrationUnsuccessfulException("Error occured when registering account");
         }
         String query4 ="UPDATE ers_users SET user_role_id = ers_user_roles.ers_user_role_id FROM ers_user_roles WHERE ers_users_id = ers_user_roles.ers_user_role_id";
         String query5="SELECT user_role_id FROM ers_users WHERE ers_username=?";
@@ -208,6 +209,7 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RegistrationUnsuccessfulException("Error occured when registering account");
         }
 
 

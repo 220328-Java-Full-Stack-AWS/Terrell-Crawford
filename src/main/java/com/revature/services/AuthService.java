@@ -20,6 +20,11 @@ import java.util.Optional;
  */
 public class AuthService {
     UserService userService= new UserService();
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
     /**
      * <ul>
      *     <li>Needs to check for existing users with username/email provided.</li>
@@ -63,11 +68,12 @@ public class AuthService {
     public User register(User userToBeRegistered) {
         String userName = userToBeRegistered.getUsername();
         int userID = userToBeRegistered.getId();
-
+        User temp = new User();
         //stores user from getByUsername output into temporary user
-         User temp =userService.getByUsername(userName).get();
+        if(userService.getByUsername(userName).isPresent()) {
+            temp = userService.getByUsername(userName).get();
+        }
          //Checks if the temp user is the same as user passed into method and throws exception if it is
-        System.out.println(temp.getUsername());
         if(temp.getUsername()!=null){
             if(temp.getUsername().equals(userName)) {
             throw new UsernameNotUniqueException("Username already exists");

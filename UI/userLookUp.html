@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="./style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +10,17 @@
 </head>
 
 <body>
-    <div>
+    <button id="logoutButton" onclick="window.location.href ='./login.html'">Log Out</button>
+    <button id="backButton" onclick="window.location.href ='./landingPage.html'">Back</button>
+    <br>
+    <h2 id="MiddleText">Search a user by either entering their username or their user Id</h2>
+    <div class="flexRow">
         <label> Search for User with username: </label>
         <input type="text" id="username" placeholder="username" name="jsmith123"> <button
             onclick="searchUser(document.getElementById('username').value)"> Search Username</button>
     </div>
     <br>
-    <div>
+    <div class="flexRow">
         <label> Search for user with ID = </label>
         <input type="text" id="EyeD" placeholder="1" name="1"><button
             onclick="searchID(document.getElementById('EyeD').value)">Search ID</button>
