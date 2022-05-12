@@ -34,8 +34,19 @@ The Expense Reimbursement System (ERS)  manages the process of reimbursing emplo
  - As an admin, I can deny expense reimbursements
  - As an admin, I can filter requests by status
 
-
-
+### How to start:
+-Clone this repository using to the desired directory using git clone
+``` git clone <repositoryurl>```
+-Create an application.properties file and add the following
+```
+hostname=<Database connection url>
+port=<port to connect to>
+username=<Database username>
+password=<Database password>
+dbname=<Database Name>
+schemaName=<Schema Name>
+driver=org.postgresql.Driver
+```
 **State-chart Diagram (Reimbursement Statuses)** 
 
 ![](./imgs/state-chart.jpg)
