@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 public class Reimbursement extends AbstractReimbursement {
     private int  reimbTypeID;
     private int  statusID;
-    //private Image reciept;
+
     private String description;
     private String reimbType;
     private Timestamp creationDate;
@@ -41,7 +41,6 @@ public class Reimbursement extends AbstractReimbursement {
         this.reimbType=reimbType;
         this.statusID=statusID;
         this.reimbTypeID=reimbTypeID;
-        //this.reciept=reciept;
         this.description=description;
         this.creationDate=creationDate;
         this.resolutionDate=resolutionDate;
@@ -73,14 +72,6 @@ public class Reimbursement extends AbstractReimbursement {
     public void setReimbTypeID(int reimbTypeID) {
         this.reimbTypeID = reimbTypeID;
     }
-
-   /* public Image getReciept() {
-        return reciept;
-    }
-
-    public void setReciept(Image reciept) {
-        this.reciept = reciept;
-    }*/
 
     public String getDescription() {
         return description;
