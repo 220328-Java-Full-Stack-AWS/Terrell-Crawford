@@ -48,6 +48,9 @@ dbname=<Database Name>
 schemaName=<Schema Name>
 driver=org.postgresql.Driver
 ```
+### Contributors:
+ - Terrell Crawford
+
 **State-chart Diagram (Reimbursement Statuses)** 
 
 ![](./imgs/state-chart.jpg)
