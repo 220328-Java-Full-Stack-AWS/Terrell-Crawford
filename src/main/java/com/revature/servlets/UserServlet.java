@@ -66,7 +66,7 @@ public class UserServlet extends HttpServlet {
                 resp.setHeader("access-control-expose-headers", "authToken, userIs");
                 resp.setHeader("authToken", currentUser.getUsername());
 
-                //resp.setHeader("access-control-expose-headers", "userIs");
+
                 resp.setHeader("userIs", currentUser.getRole().toString());
 
             //creating a new User and putting them in the DB
@@ -109,7 +109,7 @@ public class UserServlet extends HttpServlet {
             resp.getWriter().print(json);
             resp.setHeader("access-control-expose-headers", "authToken, userIs");
             resp.setHeader("authToken", testUser.getUsername());
-            //resp.setHeader("access-control-expose-headers", "userIs");
+
             resp.setHeader("userIs", testUser.getRole().toString());
         }catch(NoSuchUserException e){
             resp.setStatus(404);

@@ -151,8 +151,6 @@ public class UserDAO {
         try {
             //Set values in SQL statement to Role ID and Role of User that was passed in
             PreparedStatement preparedStatement=con.prepareStatement(query2);
-            //preparedStatement.setInt(1, userToBeRegistered.getRoleID());
-
             preparedStatement.setString(1, userToBeRegistered.getRole().toString());
             preparedStatement.executeUpdate();
 
@@ -167,19 +165,17 @@ public class UserDAO {
             //Stores prepared SQL statement into st
             PreparedStatement st = con.prepareStatement(query);
             //sets vales called sent into prepared statement
-            //st.setInt(1, userToBeRegistered.getId());
             st.setString(1, userToBeRegistered.getUsername());
             st.setString(2, userToBeRegistered.getPassword());
             st.setString(3, userToBeRegistered.getFirstName());
             st.setString(4, userToBeRegistered.getLastName());
             st.setString(5, userToBeRegistered.getEmail());
-            //st.setInt(7,userToBeRegistered.getRoleID());
+
             rowChecker=st.executeUpdate();
 
         }catch (SQLException e) {
             System.out.println("Couldn't add user \n"+ e.getMessage() +"\n"+ e.getErrorCode());
-           /* if(rowChecker==0&& e.getErrorCode()==0){
-            }else */
+
             throw new RegistrationUnsuccessfulException("Error occured when registering account");
         }
         String query3 = "SELECT ers_users_id FROM ers_users WHERE ers_username=?";
@@ -198,7 +194,7 @@ public class UserDAO {
         String query5="SELECT user_role_id FROM ers_users WHERE ers_username=?";
         try {
             PreparedStatement preparedStatement= con.prepareStatement(query4);
-            //preparedStatement.setString(1, userToBeRegistered.getUsername());
+
             preparedStatement.executeUpdate();
             preparedStatement= con.prepareStatement(query5);
             preparedStatement.setString(1, userToBeRegistered.getUsername());

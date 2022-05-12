@@ -42,7 +42,6 @@ public class ReimbursementDAO {
                 temp.setCreationDate(resultSet.getTimestamp(3));
                 temp.setResolutionDate(resultSet.getTimestamp(4));
                 temp.setDescription(resultSet.getString(5));
-                //temp.setReciept((Image) resultSet.getBlob(6));
                 temp.setAuthor(userService.getByUserID(resultSet.getInt(7)).get());
                 temp.setResolver(userService.getByUserID(resultSet.getInt(8)).get());
                 temp.setStatusID(resultSet.getInt(9));
@@ -192,7 +191,6 @@ public class ReimbursementDAO {
             preparedStatement.setTimestamp(3, newReimb.getResolutionDate());
             preparedStatement.setString(4, newReimb.getDescription());
             preparedStatement.setInt(5, newReimb.getAuthor().getId());
-            //preparedStatement.setInt(6, newReimb.getResolver().getId());
             preparedStatement.executeUpdate();
             //Store and get the StatusID into the Reimbursement
             preparedStatement= con.prepareStatement(loadInStatusID);
