@@ -35,9 +35,10 @@ The Expense Reimbursement System (ERS)  manages the process of reimbursing emplo
  - As an admin, I can filter requests by status
 
 ### How to start:
- -Clone this repository using to the desired directory using git clone
+ - Clone this repository using to the desired directory using git clone
 ``` git clone <repositoryurl>```
- -Create an application.properties file and add the following
+ - Create a resource folder in main, then create an application.properties file and add the following to it
+   - All other code should be in this repository
 ```
 hostname=<Database connection url>
 port=<port to connect to>
